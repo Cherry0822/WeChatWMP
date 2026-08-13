@@ -8,7 +8,6 @@ final class AppModel: ObservableObject {
     @Published var projectRoot: String
     @Published var debugger: DebuggerService
     @Published var mcp: MCPClient
-    @Published var workflow: WorkflowEngine
     @Published var isCheckingEnvironment = false
     @Published var installMessage = ""
     let logStore = LogStore()
@@ -17,19 +16,14 @@ final class AppModel: ObservableObject {
         projectRoot = UserDefaults.standard.string(forKey: "projectRoot") ?? Self.defaultProjectRoot()
         let debuggerService = DebuggerService()
         let mcpClient = MCPClient()
-        let workflowEngine = WorkflowEngine(mcp: mcpClient)
         _debugger = Published(initialValue: debuggerService)
         _mcp = Published(initialValue: mcpClient)
-        _workflow = Published(initialValue: workflowEngine)
 
         debuggerService.onLog = { [weak self] text in
             self?.logStore.append(.debugger, text)
         }
         mcpClient.onLog = { [weak self] text in
             self?.logStore.append(.mcp, text)
-        }
-        workflowEngine.onLog = { [weak self] text in
-            self?.logStore.append(.launcher, text)
         }
     }
 

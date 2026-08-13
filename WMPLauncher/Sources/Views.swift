@@ -1,6 +1,13 @@
 import SwiftUI
 import AppKit
 
+extension AnyTransition {
+    static let liquidGlass: AnyTransition = .asymmetric(
+        insertion: .opacity.combined(with: .scale(scale: 0.96, anchor: .top)),
+        removal: .opacity.combined(with: .scale(scale: 1.03, anchor: .top))
+    )
+}
+
 final class ToolsSelection: ObservableObject {
     @Published var selectedTool: ToolInfo?
 }
@@ -12,9 +19,6 @@ final class SettingsUIState: ObservableObject {
 // MARK: - 颜色与小组件
 
 extension Color {
-    static let launcherPanel = Color(nsColor: .controlBackgroundColor)
-    static let launcherPanelAlt = Color(nsColor: .underPageBackgroundColor)
-    static let launcherSeparator = Color(nsColor: .separatorColor)
     static let launcherText = Color(nsColor: .textColor)
     static let launcherSecondary = Color(nsColor: .secondaryLabelColor)
     static let launcherGreen = Color(nsColor: .systemGreen)
@@ -24,22 +28,17 @@ extension Color {
 }
 
 struct StatusPill: View {
+    @EnvironmentObject private var theme: GlassTheme
     let text: String
     var color: Color = .launcherSecondary
 
     var body: some View {
-        HStack(spacing: 5) {
-            Circle().fill(color).frame(width: 6, height: 6)
-            Text(text).font(.caption)
-        }
-        .foregroundColor(color)
-        .padding(.horizontal, 9)
-        .padding(.vertical, 3)
-        .background(color.opacity(0.13), in: Capsule())
+        GlassPill(text: text, color: color, opacity: theme.opacity)
     }
 }
 
 struct LauncherCard<Content: View>: View {
+    @EnvironmentObject private var theme: GlassTheme
     @ViewBuilder let content: () -> Content
     let fillsHeight: Bool
 
@@ -58,11 +57,7 @@ struct LauncherCard<Content: View>: View {
             maxHeight: fillsHeight ? .infinity : nil,
             alignment: .topLeading
         )
-        .background(Color.launcherPanel, in: RoundedRectangle(cornerRadius: 12))
-        .overlay(
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(Color.launcherSeparator, lineWidth: 1)
-        )
+        .glassPanel(cornerRadius: 10, opacity: theme.opacity)
     }
 }
 
@@ -98,26 +93,32 @@ struct ContentView: View {
     @EnvironmentObject private var model: AppModel
 
     var body: some View {
-        HStack(spacing: 0) {
-            SidebarView()
-                .frame(width: 190)
-            Divider()
-            Group {
-                switch model.tab {
-                case .overview: OverviewView()
-                case .services: ServicesView()
-                case .logs: LogsView()
-                case .versions: VersionsView()
-                case .workflow: WorkflowView()
-                case .tools: ToolsView()
-                case .settings: SettingsView()
+        ZStack {
+            CelosiaBackground()
+
+            HStack(spacing: 0) {
+                SidebarView()
+                    .frame(width: 190)
+                Divider()
+                Group {
+                    switch model.tab {
+                    case .overview: OverviewView()
+                    case .services: ServicesView()
+                    case .logs: LogsView()
+                    case .versions: VersionsView()
+                    case .tools: ToolsView()
+                    case .settings: SettingsView()
+                    }
                 }
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                .padding(22)
+                .id(model.tab)
+                .transition(.liquidGlass)
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-            .padding(22)
+            .frame(minWidth: 960, minHeight: 660)
         }
-        .frame(minWidth: 960, minHeight: 660)
-        .background(Color(nsColor: .windowBackgroundColor))
+        .preferredColorScheme(.dark)
+        .background(WindowTransparency())
         .task {
             model.bootstrap()
         }
@@ -126,31 +127,41 @@ struct ContentView: View {
 
 struct SidebarView: View {
     @EnvironmentObject private var model: AppModel
+    @EnvironmentObject private var theme: GlassTheme
+    @Namespace private var namespace
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
-            ForEach(LauncherTab.allCases) { tab in
-                Button {
-                    model.tab = tab
-                } label: {
-                    HStack(spacing: 9) {
-                        Image(systemName: tab.icon)
-                            .frame(width: 18)
-                        Text(tab.title)
-                        Spacer(minLength: 0)
+            GlassEffectContainer(spacing: 4) {
+                VStack(alignment: .leading, spacing: 4) {
+                    ForEach(LauncherTab.allCases) { tab in
+                        let isSelected = model.tab == tab
+
+                        Button {
+                            withAnimation(.spring(response: 0.32, dampingFraction: 0.82)) {
+                                model.tab = tab
+                            }
+                        } label: {
+                            HStack(spacing: 9) {
+                                Image(systemName: tab.icon)
+                                    .frame(width: 18)
+                                Text(tab.title)
+                                Spacer(minLength: 0)
+                            }
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 8)
+                            .contentShape(RoundedRectangle(cornerRadius: 10))
+                        }
+                        .buttonStyle(.plain)
+                        .foregroundStyle(isSelected ? Color.white : Color.primary.opacity(0.82))
+                        .glassEffect(
+                            isSelected ? .regular.tint(.accentColor).interactive() : .clear,
+                            in: RoundedRectangle(cornerRadius: 10)
+                        )
+                        .glassEffectID(tab.id, in: namespace)
                     }
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 8)
-                    .contentShape(Rectangle())
                 }
-                .buttonStyle(.plain)
-                .foregroundColor(model.tab == tab ? Color.accentColor : .primary)
-                .background(
-                    model.tab == tab
-                        ? Color.accentColor.opacity(0.15)
-                        : Color.clear,
-                    in: RoundedRectangle(cornerRadius: 8)
-                )
+                .padding(3)
             }
             Spacer()
             Text("v0.1.0 · GPL-2.0")
@@ -159,7 +170,14 @@ struct SidebarView: View {
                 .padding(8)
         }
         .padding(10)
-        .background(Color.launcherPanelAlt)
+        .background(
+            GlassBackground(
+                material: .sidebar,
+                blendingMode: .withinWindow,
+                cornerRadius: 0,
+                opacity: theme.opacity
+            )
+        )
     }
 }
 
@@ -196,7 +214,7 @@ struct OverviewView: View {
                                 : "checkmark.seal"
                         )
                     }
-                    .buttonStyle(.borderedProminent)
+                    .buttonStyle(GlassButtonStyle(tint: Color.accentColor))
                     .disabled(model.isCheckingEnvironment)
 
                     if model.isCheckingEnvironment {
@@ -226,22 +244,24 @@ struct OverviewView: View {
                     Button(action: model.startDebugger) {
                         Label("启动调试器", systemImage: "play.fill")
                     }
-                    .buttonStyle(.borderedProminent)
+                    .buttonStyle(GlassButtonStyle(tint: Color.accentColor))
                     .disabled(debugger.state.isRunning || debugger.state.isBusy)
 
                     Button(action: model.startMCP) {
                         Label("启动 MCP", systemImage: "play.fill")
                     }
-                    .buttonStyle(.borderedProminent)
+                    .buttonStyle(GlassButtonStyle(tint: Color.accentColor))
                     .disabled(mcp.state.isRunning || mcp.state.isBusy)
 
                     Button(action: AppModel.openDevTools) {
                         Label("打开 DevTools", systemImage: "arrow.up.right.square")
                     }
+                    .buttonStyle(GlassButtonStyle())
 
                     Button(action: copyMCPConfig) {
                         Label("复制 MCP 配置", systemImage: "doc.on.doc")
                     }
+                    .buttonStyle(GlassButtonStyle())
                 }
                 .controlSize(.regular)
                 .padding(.bottom, 10)
@@ -269,10 +289,11 @@ struct OverviewView: View {
                 .foregroundColor(.launcherSecondary)
             Spacer(minLength: 6)
             HStack(spacing: 8) {
-                Button("打开 DevTools", action: AppModel.openDevTools).controlSize(.small)
+                Button("打开 DevTools", action: AppModel.openDevTools)
+                    .buttonStyle(GlassButtonStyle())
                 Button(debugger.state.isRunning ? "关闭" : "启动",
                        action: debugger.state.isRunning ? model.stopDebugger : model.startDebugger)
-                    .controlSize(.small)
+                    .buttonStyle(GlassButtonStyle(tint: debugger.state.isRunning ? Color.launcherRed : Color.accentColor))
                     .disabled(debugger.state.isBusy)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -296,9 +317,10 @@ struct OverviewView: View {
                 .lineLimit(1)
             Spacer(minLength: 6)
             HStack(spacing: 8) {
-                Button("复制配置", action: copyMCPConfig).controlSize(.small)
+                Button("复制配置", action: copyMCPConfig)
+                    .buttonStyle(GlassButtonStyle())
                 Button(mcp.state.isRunning ? "停止" : "启动", action: mcp.state.isRunning ? model.stopMCP : model.startMCP)
-                    .controlSize(.small)
+                    .buttonStyle(GlassButtonStyle(tint: mcp.state.isRunning ? Color.launcherRed : Color.accentColor))
                     .disabled(mcp.state.isBusy)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -323,8 +345,8 @@ struct OverviewView: View {
                 .font(.caption)
                 .foregroundColor(.launcherSecondary)
             Spacer(minLength: 6)
-            Button("查看 Target", action: { model.tab = .workflow })
-                .controlSize(.small)
+            Button("查看 Target", action: { model.tab = .tools })
+                .buttonStyle(GlassButtonStyle())
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
@@ -361,10 +383,10 @@ struct OverviewView: View {
                             : "checkmark.seal"
                     )
                 }
-                .controlSize(.small)
+                .buttonStyle(GlassButtonStyle(tint: Color.accentColor))
                 .disabled(model.isCheckingEnvironment)
                 Button("查看详情", action: { model.tab = .services })
-                    .controlSize(.small)
+                    .buttonStyle(GlassButtonStyle())
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
@@ -387,6 +409,7 @@ struct OverviewView: View {
 }
 
 struct EnvRow: View {
+    @EnvironmentObject private var theme: GlassTheme
     let item: EnvCheckItem
     var onTap: (() -> Void)? = nil
 
@@ -402,8 +425,7 @@ struct EnvRow: View {
             Spacer(minLength: 0)
         }
         .padding(10)
-        .background(Color.launcherPanel, in: RoundedRectangle(cornerRadius: 10))
-        .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.launcherSeparator, lineWidth: 1))
+        .glassSurface(cornerRadius: 10, opacity: theme.opacity)
         .contentShape(Rectangle())
         .onTapGesture {
             onTap?()
@@ -428,6 +450,7 @@ struct EnvRow: View {
 }
 
 struct EnvDetailRow: View {
+    @EnvironmentObject private var theme: GlassTheme
     let item: EnvCheckItem
 
     var body: some View {
@@ -452,8 +475,7 @@ struct EnvDetailRow: View {
             Spacer(minLength: 0)
         }
         .padding(10)
-        .background(Color.launcherPanel, in: RoundedRectangle(cornerRadius: 10))
-        .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.launcherSeparator, lineWidth: 1))
+        .glassSurface(cornerRadius: 10, opacity: theme.opacity)
     }
 
     private var statusText: String {
@@ -599,6 +621,7 @@ struct ServicesView: View {
 }
 
 struct LogView: View {
+    @EnvironmentObject private var theme: GlassTheme
     let text: String
 
     var body: some View {
@@ -611,8 +634,7 @@ struct LogView: View {
                     .id("log-bottom")
             }
             .frame(minHeight: 180, maxHeight: 300)
-            .background(Color.launcherPanelAlt, in: RoundedRectangle(cornerRadius: 9))
-            .overlay(RoundedRectangle(cornerRadius: 9).stroke(Color.launcherSeparator, lineWidth: 1))
+            .glassSurface(cornerRadius: 9, opacity: theme.opacity)
             .onChange(of: text) { _ in
                 proxy.scrollTo("log-bottom", anchor: .bottom)
             }
@@ -624,8 +646,46 @@ final class LogsViewState: ObservableObject {
     @Published var filter: LogStore.Source = .all
 }
 
+struct LiquidSourcePicker: View {
+    @Binding var selection: LogStore.Source
+    @Namespace private var namespace
+
+    var body: some View {
+        GlassEffectContainer(spacing: 4) {
+            HStack(spacing: 4) {
+                ForEach(LogStore.Source.allCases) { source in
+                    let isSelected = selection == source
+
+                    Button {
+                        withAnimation(.spring(response: 0.32, dampingFraction: 0.82)) {
+                            selection = source
+                        }
+                    } label: {
+                        Text(source.rawValue)
+                            .font(.callout)
+                            .fontWeight(isSelected ? .semibold : .regular)
+                            .foregroundStyle(isSelected ? Color.white : Color.primary.opacity(0.72))
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 7)
+                            .frame(maxWidth: .infinity)
+                            .contentShape(Capsule())
+                    }
+                    .buttonStyle(.plain)
+                    .glassEffect(
+                        isSelected ? .regular.tint(.accentColor).interactive() : .clear,
+                        in: Capsule()
+                    )
+                    .glassEffectID(source.rawValue, in: namespace)
+                }
+            }
+            .padding(3)
+        }
+    }
+}
+
 struct LogsView: View {
     @EnvironmentObject private var logStore: LogStore
+    @EnvironmentObject private var theme: GlassTheme
     @StateObject private var state = LogsViewState()
 
     private let timeFormatter: DateFormatter = {
@@ -648,14 +708,8 @@ struct LogsView: View {
             PageHeader(title: "运行日志", subtitle: "启动器、调试器与 MCP 服务的实时运行日志")
 
             HStack(spacing: 10) {
-                Picker("来源", selection: $state.filter) {
-                    ForEach(LogStore.Source.allCases) { source in
-                        Text(source.rawValue).tag(source)
-                    }
-                }
-                .pickerStyle(.segmented)
-                .labelsHidden()
-                .frame(maxWidth: 340)
+                LiquidSourcePicker(selection: $state.filter)
+                    .frame(maxWidth: 340)
 
                 Spacer(minLength: 0)
 
@@ -688,8 +742,7 @@ struct LogsView: View {
                     }
                 }
                 .frame(minHeight: 380, maxHeight: .infinity)
-                .background(Color.launcherPanelAlt, in: RoundedRectangle(cornerRadius: 10))
-                .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.launcherSeparator, lineWidth: 1))
+                .glassSurface(cornerRadius: 10, opacity: theme.opacity)
                 .onChange(of: logStore.entries.count) { _ in
                     proxy.scrollTo("log-bottom", anchor: .bottom)
                 }
@@ -744,268 +797,6 @@ struct LogEntryRow: View {
         case .mcp: return .launcherOrange
         case .all: return .launcherSecondary
         }
-    }
-}
-
-// MARK: - 工作流
-
-struct WorkflowView: View {
-    @EnvironmentObject private var model: AppModel
-    @EnvironmentObject private var mcp: MCPClient
-    @EnvironmentObject private var workflow: WorkflowEngine
-
-    var body: some View {
-        HStack(alignment: .top, spacing: 14) {
-            VStack(spacing: 8) {
-                ForEach(WorkflowStep.allCases) { step in
-                    StepRow(step: step)
-                }
-                Button {
-                    workflow.reset()
-                } label: {
-                    Label("重置流程", systemImage: "arrow.counterclockwise")
-                }
-                .buttonStyle(.bordered)
-                .padding(.top, 6)
-            }
-            .frame(width: 320)
-
-            detailCard
-        }
-    }
-
-    private var detailCard: some View {
-        LauncherCard {
-            HStack {
-                Text("\(workflow.currentStep.rawValue + 1). \(workflow.currentStep.title)")
-                    .font(.headline)
-                Spacer()
-                if workflow.isDone {
-                    StatusPill(text: "完成", color: .launcherGreen)
-                } else if workflow.busy {
-                    StatusPill(text: "执行中…", color: .launcherOrange)
-                } else {
-                    StatusPill(text: "步骤 \(workflow.currentStep.rawValue + 1) / \(WorkflowStep.allCases.count)")
-                }
-            }
-
-            Text("工具调用")
-                .font(.caption)
-                .foregroundColor(.launcherSecondary)
-            Text(workflow.currentStep.toolCall)
-                .font(.system(size: 11.5, design: .monospaced))
-                .textSelection(.enabled)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(10)
-                .background(Color.launcherPanelAlt, in: RoundedRectangle(cornerRadius: 8))
-
-            stepControls
-
-            if let error = workflow.lastError {
-                Text("错误：\(error)")
-                    .font(.caption)
-                    .foregroundColor(.launcherRed)
-            }
-
-            Text("结果预览")
-                .font(.caption)
-                .foregroundColor(.launcherSecondary)
-            ScrollView {
-                Text(workflow.detailResult.isEmpty ? "（尚未执行）" : workflow.detailResult)
-                    .font(.system(size: 11.5, design: .monospaced))
-                    .textSelection(.enabled)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-            }
-            .frame(minHeight: 120, maxHeight: 300)
-            .background(Color.launcherPanelAlt, in: RoundedRectangle(cornerRadius: 8))
-            .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.launcherSeparator, lineWidth: 1))
-
-            if !mcp.state.isRunning {
-                Label("MCP 服务未运行，请先到「服务」页启动", systemImage: "exclamationmark.triangle")
-                    .font(.caption)
-                    .foregroundColor(.launcherOrange)
-            }
-        }
-    }
-
-    @ViewBuilder
-    private var stepControls: some View {
-        switch workflow.currentStep {
-        case .clear:
-            Button {
-                Task { await workflow.runCurrentStep() }
-            } label: {
-                Label("清空记录", systemImage: "trash")
-            }
-            .buttonStyle(.borderedProminent)
-            .disabled(!mcp.state.isRunning || workflow.busy)
-        case .capture:
-            VStack(alignment: .leading, spacing: 8) {
-                Stepper(value: $workflow.captureWaitSeconds, in: 0...10, step: 1) {
-                    Text("等待 \(workflow.captureWaitSeconds) 秒后查询")
-                }
-                Text("提示：点击下方按钮后，请在小程序里触发要抓包的操作。")
-                    .font(.caption)
-                    .foregroundColor(.launcherSecondary)
-                HStack {
-                    Button {
-                        Task { await workflow.runCurrentStep() }
-                    } label: {
-                        Label("开始抓包（等待后查询）", systemImage: "play.fill")
-                    }
-                    .buttonStyle(.borderedProminent)
-                    Button {
-                        Task { await workflow.captureNow() }
-                    } label: {
-                        Label("立即抓取", systemImage: "arrow.clockwise")
-                    }
-                }
-            }
-            .disabled(!mcp.state.isRunning || workflow.busy)
-        case .trace:
-            VStack(alignment: .leading, spacing: 8) {
-                TextField("请求 ID（reqid）", text: $workflow.selectedRequestID)
-                    .textFieldStyle(.roundedBorder)
-                Button {
-                    Task { await workflow.runCurrentStep() }
-                } label: {
-                    Label("溯源", systemImage: "point.3.connected.trianglepath.dotted")
-                }
-                .buttonStyle(.borderedProminent)
-            }
-            .disabled(!mcp.state.isRunning || workflow.busy)
-        case .source:
-            VStack(alignment: .leading, spacing: 8) {
-                TextField("脚本 URL", text: $workflow.selectedScriptURL)
-                    .textFieldStyle(.roundedBorder)
-                HStack {
-                    Button {
-                        Task { await workflow.listScripts() }
-                    } label: {
-                        Label("列出脚本", systemImage: "list.bullet")
-                    }
-                    Button {
-                        Task { await workflow.runCurrentStep() }
-                    } label: {
-                        Label("读取源码（1-80 行）", systemImage: "doc.text")
-                    }
-                    .buttonStyle(.borderedProminent)
-                }
-            }
-            .disabled(!mcp.state.isRunning || workflow.busy)
-        case .breakpoint:
-            VStack(alignment: .leading, spacing: 8) {
-                TextField("断点文本（函数体内部的语句）", text: $workflow.breakpointText)
-                    .textFieldStyle(.roundedBorder)
-                Text("不要设在函数名或 `xxx = function` 赋值处，压缩代码里那只是一次性赋值。")
-                    .font(.caption)
-                    .foregroundColor(.launcherOrange)
-                Button {
-                    Task { await workflow.runCurrentStep() }
-                } label: {
-                    Label("设置断点", systemImage: "ladybug")
-                }
-                .buttonStyle(.borderedProminent)
-            }
-            .disabled(!mcp.state.isRunning || workflow.busy)
-        case .paused:
-            Button {
-                Task { await workflow.runCurrentStep() }
-            } label: {
-                Label("查看暂停状态", systemImage: "pause.circle")
-            }
-            .buttonStyle(.borderedProminent)
-            .disabled(!mcp.state.isRunning || workflow.busy)
-        case .cleanup:
-            VStack(alignment: .leading, spacing: 8) {
-                HStack {
-                    Button { Task { await workflow.step("over") } } label: { Text("单步 over") }
-                    Button { Task { await workflow.step("into") } } label: { Text("单步 into") }
-                    Button { Task { await workflow.step("out") } } label: { Text("单步 out") }
-                }
-                Button {
-                    Task { await workflow.resume() }
-                } label: {
-                    Label("恢复执行", systemImage: "play")
-                }
-                Button {
-                    Task { await workflow.runCurrentStep() }
-                } label: {
-                    Label("清理全部断点并完成", systemImage: "checkmark.circle")
-                }
-                .buttonStyle(.borderedProminent)
-            }
-            .disabled(!mcp.state.isRunning || workflow.busy)
-        }
-    }
-}
-
-struct StepRow: View {
-    @EnvironmentObject private var workflow: WorkflowEngine
-    let step: WorkflowStep
-
-    var body: some View {
-        Button {
-            workflow.select(step)
-        } label: {
-            HStack(spacing: 10) {
-                ZStack {
-                    Circle()
-                        .fill(circleColor)
-                        .frame(width: 26, height: 26)
-                    Text("\(step.rawValue + 1)")
-                        .font(.caption.weight(.semibold))
-                        .foregroundColor(circleForeground)
-                }
-                VStack(alignment: .leading, spacing: 1) {
-                    Text(step.title).font(.subheadline).fontWeight(.medium)
-                    Text(step.subtitle)
-                        .font(.caption2)
-                        .foregroundColor(.launcherSecondary)
-                        .lineLimit(1)
-                }
-                Spacer()
-                Image(systemName: statusIcon)
-                    .foregroundColor(statusColor)
-            }
-            .padding(10)
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
-        .background(
-            RoundedRectangle(cornerRadius: 10)
-                .fill(isActive ? Color.accentColor.opacity(0.12) : Color.clear)
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 10)
-                .stroke(isActive ? Color.accentColor : Color.launcherSeparator, lineWidth: isActive ? 1.5 : 1)
-        )
-    }
-
-    private var isActive: Bool { workflow.currentStep == step }
-    private var isDone: Bool { workflow.doneSteps.contains(step.rawValue) }
-
-    private var circleColor: Color {
-        if isDone { return .launcherGreen }
-        if isActive { return .accentColor }
-        return Color.launcherPanelAlt
-    }
-
-    private var circleForeground: Color {
-        if isDone || isActive { return .white }
-        return .launcherSecondary
-    }
-
-    private var statusIcon: String {
-        if isDone { return "checkmark.circle.fill" }
-        if isActive { return "circle.dotted" }
-        return "circle"
-    }
-
-    private var statusColor: Color {
-        if isDone { return .launcherGreen }
-        if isActive { return .accentColor }
-        return .launcherSecondary
     }
 }
 
@@ -1064,8 +855,8 @@ struct ToolsView: View {
                                         .font(.system(size: 11, design: .monospaced))
                                         .padding(.horizontal, 7)
                                         .padding(.vertical, 2)
-                                        .background(Color.launcherPanelAlt, in: Capsule())
-                                        .overlay(Capsule().stroke(Color.launcherSeparator, lineWidth: 1))
+                                        .background(Color.white.opacity(0.10), in: Capsule())
+                                        .overlay(Capsule().stroke(Color.white.opacity(0.22), lineWidth: 1))
                                 }
                             }
                         }
@@ -1084,6 +875,7 @@ struct ToolsView: View {
 }
 
 struct ToolChip: View {
+    @EnvironmentObject private var theme: GlassTheme
     let tool: ToolInfo
     let isSelected: Bool
     let onSelect: () -> Void
@@ -1099,13 +891,14 @@ struct ToolChip: View {
                 .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+        .glassSurface(cornerRadius: 8, opacity: theme.opacity * 0.75)
         .background(
-            isSelected ? Color.accentColor.opacity(0.15) : Color.launcherPanel,
+            isSelected ? Color.accentColor.opacity(0.16) : Color.clear,
             in: RoundedRectangle(cornerRadius: 8)
         )
         .overlay(
             RoundedRectangle(cornerRadius: 8)
-                .stroke(isSelected ? Color.accentColor : Color.launcherSeparator, lineWidth: isSelected ? 1.5 : 1)
+                .stroke(isSelected ? Color.accentColor : Color.white.opacity(0.16), lineWidth: isSelected ? 1.5 : 1)
         )
         .foregroundColor(isSelected ? Color.accentColor : .primary)
     }
@@ -1115,6 +908,7 @@ struct ToolChip: View {
 
 struct SettingsView: View {
     @EnvironmentObject private var model: AppModel
+    @EnvironmentObject private var theme: GlassTheme
     @StateObject private var uiState = SettingsUIState()
 
     @AppStorage("launchAtLogin") private var launchAtLogin = false
@@ -1125,8 +919,11 @@ struct SettingsView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
-                PageHeader(title: "设置", subtitle: "项目路径、MCP 注册与启动行为")
+                PageHeader(title: "设置", subtitle: "项目路径、液态玻璃外观、MCP 注册与启动行为")
 
+                glassAppearanceSection
+
+                SectionTitle(text: "项目路径")
                 VStack(alignment: .leading, spacing: 12) {
                     settingField("项目路径") {
                         TextField("项目路径", text: $model.projectRoot)
@@ -1142,7 +939,7 @@ struct SettingsView: View {
                             .textSelection(.enabled)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(9)
-                            .background(Color.launcherPanelAlt, in: RoundedRectangle(cornerRadius: 8))
+                            .glassSurface(cornerRadius: 8, opacity: theme.opacity)
                     }
                     settingField("Python 解释器（venv）") {
                         Text(model.env.pythonPath)
@@ -1150,7 +947,7 @@ struct SettingsView: View {
                             .textSelection(.enabled)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(9)
-                            .background(Color.launcherPanelAlt, in: RoundedRectangle(cornerRadius: 8))
+                            .glassSurface(cornerRadius: 8, opacity: theme.opacity)
                     }
                 }
 
@@ -1160,8 +957,7 @@ struct SettingsView: View {
                     .textSelection(.enabled)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(12)
-                    .background(Color.launcherPanelAlt, in: RoundedRectangle(cornerRadius: 9))
-                    .overlay(RoundedRectangle(cornerRadius: 9).stroke(Color.launcherSeparator, lineWidth: 1))
+                    .glassSurface(cornerRadius: 9, opacity: theme.opacity)
 
                 HStack(spacing: 10) {
                     Button {
@@ -1190,11 +986,32 @@ struct SettingsView: View {
                     toggleRow("启动时打开 DevTools", "调试服务就绪后自动打开浏览器调试页", $openDevToolsOnStart)
                 }
                 .padding(.horizontal, 14)
-                .background(Color.launcherPanel, in: RoundedRectangle(cornerRadius: 12))
-                .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.launcherSeparator, lineWidth: 1))
+                .glassSurface(cornerRadius: 12, opacity: theme.opacity)
                 .padding(.bottom, 12)
             }
         }
+    }
+
+    private var glassAppearanceSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Label("液态玻璃透明度", systemImage: "circle.lefthalf.filled")
+                    .font(.callout)
+                    .fontWeight(.medium)
+                Spacer()
+                Text("\(theme.percentage)%")
+                    .font(.system(.callout, design: .monospaced))
+                    .foregroundColor(.launcherSecondary)
+            }
+            Slider(value: $theme.opacity, in: 0...1.0, step: 0.01)
+                .tint(.accentColor)
+            Text("拖动滑块可实时调整侧边栏、卡片与玻璃表面的透明程度。")
+                .font(.caption)
+                .foregroundColor(.launcherSecondary)
+        }
+        .padding(14)
+        .glassPanel(cornerRadius: 12, opacity: theme.opacity)
+        .padding(.bottom, 4)
     }
 
     private func settingField<Content: View>(_ title: String, @ViewBuilder content: () -> Content) -> some View {
@@ -1246,5 +1063,35 @@ struct SettingsView: View {
         } catch {
             model.logStore.append(.launcher, "打开 Claude Desktop 配置失败：\(error.localizedDescription)")
         }
+    }
+}
+
+struct OverviewView_Previews: PreviewProvider {
+    static var previews: some View {
+        PreviewRoot { OverviewView() }
+    }
+}
+
+struct ServicesView_Previews: PreviewProvider {
+    static var previews: some View {
+        PreviewRoot { ServicesView() }
+    }
+}
+
+struct LogsView_Previews: PreviewProvider {
+    static var previews: some View {
+        PreviewRoot { LogsView() }
+    }
+}
+
+struct ToolsView_Previews: PreviewProvider {
+    static var previews: some View {
+        PreviewRoot { ToolsView() }
+    }
+}
+
+struct SettingsView_Previews: PreviewProvider {
+    static var previews: some View {
+        PreviewRoot { SettingsView() }
     }
 }

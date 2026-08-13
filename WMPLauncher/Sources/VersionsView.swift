@@ -163,6 +163,7 @@ final class VersionEditorState: ObservableObject {
 
 struct VersionsView: View {
     @EnvironmentObject private var model: AppModel
+    @EnvironmentObject private var theme: GlassTheme
     @StateObject private var editor = VersionEditorState()
 
     var body: some View {
@@ -282,8 +283,7 @@ struct VersionsView: View {
             .controlSize(.small)
         }
         .padding(10)
-        .background(Color.launcherPanel, in: RoundedRectangle(cornerRadius: 10))
-        .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.launcherSeparator, lineWidth: 1))
+        .glassSurface(cornerRadius: 10, opacity: theme.opacity)
     }
 
     private var editorForm: some View {
@@ -332,7 +332,7 @@ struct VersionsView: View {
                 } label: {
                     Label("保存配置", systemImage: "square.and.arrow.down")
                 }
-                .buttonStyle(.borderedProminent)
+                .buttonStyle(GlassButtonStyle())
 
                 Button("取消编辑") {
                     editor.resetNew()
@@ -370,7 +370,7 @@ struct VersionsView: View {
             }
         }
         .padding(10)
-        .background(Color.launcherPanelAlt, in: RoundedRectangle(cornerRadius: 9))
+        .glassSurface(cornerRadius: 9, opacity: theme.opacity)
     }
 
     private func field(_ label: String, text: Binding<String>) -> some View {
@@ -440,5 +440,11 @@ struct VersionsView: View {
         } catch {
             model.logStore.append(.launcher, "删除配置文件失败：\(error.localizedDescription)")
         }
+    }
+}
+
+struct VersionsView_Previews: PreviewProvider {
+    static var previews: some View {
+        PreviewRoot { VersionsView() }
     }
 }

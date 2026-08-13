@@ -7,7 +7,6 @@ enum LauncherTab: String, CaseIterable, Identifiable {
     case services
     case logs
     case versions
-    case workflow
     case tools
     case settings
 
@@ -19,7 +18,6 @@ enum LauncherTab: String, CaseIterable, Identifiable {
         case .services: return "服务"
         case .logs: return "日志"
         case .versions: return "版本"
-        case .workflow: return "工作流"
         case .tools: return "工具"
         case .settings: return "设置"
         }
@@ -31,7 +29,6 @@ enum LauncherTab: String, CaseIterable, Identifiable {
         case .services: return "server.rack"
         case .logs: return "doc.plaintext"
         case .versions: return "slider.horizontal.3"
-        case .workflow: return "point.3.connected.trianglepath.dotted"
         case .tools: return "wrench.and.screwdriver"
         case .settings: return "gearshape"
         }
@@ -182,54 +179,6 @@ enum ToolCatalog {
             let tools = all.filter { $0.group == name }
             guard let first = tools.first else { return nil }
             return (name, first.groupIcon, tools)
-        }
-    }
-}
-
-enum WorkflowStep: Int, CaseIterable, Identifiable {
-    case clear = 0
-    case capture
-    case trace
-    case source
-    case breakpoint
-    case paused
-    case cleanup
-
-    var id: Int { rawValue }
-
-    var title: String {
-        switch self {
-        case .clear: return "清空记录"
-        case .capture: return "抓包"
-        case .trace: return "溯源"
-        case .source: return "读源码"
-        case .breakpoint: return "断点"
-        case .paused: return "暂停状态"
-        case .cleanup: return "单步与清理"
-        }
-    }
-
-    var subtitle: String {
-        switch self {
-        case .clear: return "list_network_requests(clear_existing)"
-        case .capture: return "list_network_requests"
-        case .trace: return "get_request_initiator"
-        case .source: return "list_scripts / get_script_source"
-        case .breakpoint: return "set_breakpoint_on_text"
-        case .paused: return "get_paused_info"
-        case .cleanup: return "step / resume / remove_breakpoints"
-        }
-    }
-
-    var toolCall: String {
-        switch self {
-        case .clear: return "list_network_requests(clear_existing=True)"
-        case .capture: return "list_network_requests(wait_ms=3000)"
-        case .trace: return "get_request_initiator(request_id=\"...\")"
-        case .source: return "get_script_source(url=\"...\", start_line=1, end_line=80)"
-        case .breakpoint: return "set_breakpoint_on_text(text=\"...\")"
-        case .paused: return "get_paused_info(include_scopes=true)"
-        case .cleanup: return "step(action) → resume_execution() → remove_breakpoints(clear_all=True)"
         }
     }
 }
