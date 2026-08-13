@@ -5,6 +5,7 @@ import SwiftUI
 enum LauncherTab: String, CaseIterable, Identifiable {
     case overview
     case services
+    case environment
     case logs
     case versions
     case tools
@@ -16,6 +17,7 @@ enum LauncherTab: String, CaseIterable, Identifiable {
         switch self {
         case .overview: return "概览"
         case .services: return "服务"
+        case .environment: return "环境检查"
         case .logs: return "日志"
         case .versions: return "版本"
         case .tools: return "工具"
@@ -27,6 +29,7 @@ enum LauncherTab: String, CaseIterable, Identifiable {
         switch self {
         case .overview: return "square.grid.2x2"
         case .services: return "server.rack"
+        case .environment: return "checkmark.shield"
         case .logs: return "doc.plaintext"
         case .versions: return "slider.horizontal.3"
         case .tools: return "wrench.and.screwdriver"

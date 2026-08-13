@@ -66,17 +66,6 @@ final class VersionEditorState: ObservableObject {
         messageIsError = false
     }
 
-    func fillTemplate(arch: String, projectRoot: String) {
-        guard let table = VersionConfigStore.template(projectRoot: projectRoot, arch: arch) else {
-            message = "未找到 addresses.18788.json 模板"
-            messageIsError = true
-            return
-        }
-        fill(arch: arch, table: table)
-        message = "已从 18788 模板填入 \(arch) 偏移"
-        messageIsError = false
-    }
-
     func arm64Table() -> WMPArchTable? {
         buildTable(
             loadStart: arm64LoadStart,
@@ -180,6 +169,7 @@ struct VersionsView: View {
                             model.refreshEnv()
                             editor.reload(projectRoot: model.projectRoot)
                         }
+                        .buttonStyle(GlassButtonStyle())
                         .controlSize(.small)
                     }
                     HStack(spacing: 28) {
@@ -222,7 +212,7 @@ struct VersionsView: View {
                 } label: {
                     Label("新增版本配置", systemImage: "plus")
                 }
-                .buttonStyle(.bordered)
+                .buttonStyle(GlassButtonStyle(tint: .accentColor))
                 .padding(.top, 10)
 
                 SectionTitle(text: "新增 / 编辑版本配置")
@@ -276,10 +266,12 @@ struct VersionsView: View {
             Button("编辑") {
                 editor.load(entry)
             }
+            .buttonStyle(GlassButtonStyle())
             .controlSize(.small)
             Button("删除", role: .destructive) {
                 delete(entry)
             }
+            .buttonStyle(GlassButtonStyle())
             .controlSize(.small)
         }
         .padding(10)
@@ -296,9 +288,6 @@ struct VersionsView: View {
 
             archEditor(
                 title: "arm64（Apple Silicon）",
-                templateAction: {
-                    editor.fillTemplate(arch: "arm64", projectRoot: model.projectRoot)
-                },
                 loadStart: $editor.arm64LoadStart,
                 loadStart2: $editor.arm64LoadStart2,
                 cdpFilter: $editor.arm64CDPFilter,
@@ -309,9 +298,6 @@ struct VersionsView: View {
 
             archEditor(
                 title: "x64（Intel）",
-                templateAction: {
-                    editor.fillTemplate(arch: "x64", projectRoot: model.projectRoot)
-                },
                 loadStart: $editor.x64LoadStart,
                 loadStart2: $editor.x64LoadStart2,
                 cdpFilter: $editor.x64CDPFilter,
@@ -337,6 +323,7 @@ struct VersionsView: View {
                 Button("取消编辑") {
                     editor.resetNew()
                 }
+                .buttonStyle(GlassButtonStyle())
 
                 Spacer()
             }
@@ -345,7 +332,6 @@ struct VersionsView: View {
 
     private func archEditor(
         title: String,
-        templateAction: @escaping () -> Void,
         loadStart: Binding<String>,
         loadStart2: Binding<String>,
         cdpFilter: Binding<String>,
@@ -354,12 +340,7 @@ struct VersionsView: View {
         sceneOffset: Binding<String>
     ) -> some View {
         VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Text(title).font(.subheadline).fontWeight(.medium)
-                Spacer()
-                Button("从 18788 模板填入", action: templateAction)
-                    .controlSize(.small)
-            }
+            Text(title).font(.subheadline).fontWeight(.medium)
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 8) {
                 field("LoadStartHookOffset", text: loadStart)
                 field("LoadStartHookOffset2", text: loadStart2)

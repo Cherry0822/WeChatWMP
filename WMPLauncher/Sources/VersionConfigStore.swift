@@ -110,13 +110,4 @@ enum VersionConfigStore {
         return path
     }
 
-    static func template(projectRoot: String, arch: String) -> WMPArchTable? {
-        let path = (configDirectory(projectRoot: projectRoot) as NSString)
-            .appendingPathComponent("addresses.18788.json")
-        guard let data = try? Data(contentsOf: URL(fileURLWithPath: path)),
-              let config = try? JSONDecoder().decode(WMPVersionConfigFile.self, from: data) else {
-            return nil
-        }
-        return arch == "x64" ? config.Arch?.x64 : config.Arch?.arm64
-    }
 }

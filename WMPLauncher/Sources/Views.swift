@@ -104,6 +104,7 @@ struct ContentView: View {
                     switch model.tab {
                     case .overview: OverviewView()
                     case .services: ServicesView()
+                    case .environment: EnvironmentView()
                     case .logs: LogsView()
                     case .versions: VersionsView()
                     case .tools: ToolsView()
@@ -187,57 +188,20 @@ struct OverviewView: View {
     @EnvironmentObject private var model: AppModel
     @EnvironmentObject private var debugger: DebuggerService
     @EnvironmentObject private var mcp: MCPClient
-
-    private let columns = Array(repeating: GridItem(.flexible(), spacing: 12), count: 4)
+    @State private var gridWidth: CGFloat = 0
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
                 PageHeader(title: "概览", subtitle: "调试服务与 MCP 服务的一体化状态")
 
-                LazyVGrid(columns: columns, spacing: 12) {
+                LazyVGrid(columns: gridColumns, spacing: 12) {
                     debuggerCard
                     mcpCard
                     targetCard
                     envCard
                 }
-
-                SectionTitle(text: "环境检查")
-                HStack(spacing: 10) {
-                    Button {
-                        Task { await model.checkAndInstallEnvironment() }
-                    } label: {
-                        Label(
-                            model.isCheckingEnvironment ? "检测中…" : "检测环境",
-                            systemImage: model.isCheckingEnvironment
-                                ? "arrow.triangle.2.circlepath"
-                                : "checkmark.seal"
-                        )
-                    }
-                    .buttonStyle(GlassButtonStyle(tint: Color.accentColor))
-                    .disabled(model.isCheckingEnvironment)
-
-                    if model.isCheckingEnvironment {
-                        ProgressView()
-                            .controlSize(.small)
-                    }
-                    if !model.installMessage.isEmpty {
-                        Text(model.installMessage)
-                            .font(.caption)
-                            .foregroundColor(.launcherSecondary)
-                            .lineLimit(2)
-                    }
-                    Spacer(minLength: 0)
-                }
-                .padding(.bottom, 10)
-
-                VStack(spacing: 8) {
-                    ForEach(model.env.checks) { item in
-                        EnvRow(item: item) {
-                            model.tab = .services
-                        }
-                    }
-                }
+                .id(gridColumnCount)
 
                 SectionTitle(text: "快捷操作")
                 HStack(spacing: 10) {
@@ -266,7 +230,24 @@ struct OverviewView: View {
                 .controlSize(.regular)
                 .padding(.bottom, 10)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .onGeometryChange(for: CGFloat.self) { proxy in
+                proxy.size.width
+            } action: { newWidth in
+                gridWidth = newWidth
+            }
         }
+    }
+
+    private var gridColumnCount: Int {
+        let spacing: CGFloat = 12
+        let minimumCardWidth: CGFloat = 360
+        let usable = max(gridWidth, minimumCardWidth)
+        return max(1, Int((usable + spacing) / (minimumCardWidth + spacing)))
+    }
+
+    private var gridColumns: [GridItem] {
+        Array(repeating: GridItem(.flexible(), spacing: 12), count: gridColumnCount)
     }
 
     private var debuggerCard: some View {
@@ -373,23 +354,34 @@ struct OverviewView: View {
                 .lineLimit(2)
             Spacer(minLength: 6)
             HStack(spacing: 8) {
-                Button {
-                    Task { await model.checkAndInstallEnvironment() }
-                } label: {
-                    Label(
-                        model.isCheckingEnvironment ? "检测中…" : "检测环境",
-                        systemImage: model.isCheckingEnvironment
-                            ? "arrow.triangle.2.circlepath"
-                            : "checkmark.seal"
-                    )
-                }
-                .buttonStyle(GlassButtonStyle(tint: Color.accentColor))
-                .disabled(model.isCheckingEnvironment)
-                Button("查看详情", action: { model.tab = .services })
-                    .buttonStyle(GlassButtonStyle())
+                detectEnvironmentButton
+                viewDetailsButton
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
+    }
+
+    @ViewBuilder
+    private var detectEnvironmentButton: some View {
+        Button {
+            Task { await model.checkAndInstallEnvironment() }
+        } label: {
+            Label(
+                model.isCheckingEnvironment ? "检测中…" : "检测环境",
+                systemImage: model.isCheckingEnvironment
+                    ? "arrow.triangle.2.circlepath"
+                    : "checkmark.seal"
+            )
+        }
+        .buttonStyle(GlassButtonStyle(tint: Color.accentColor))
+        .disabled(model.isCheckingEnvironment)
+        .layoutPriority(1)
+    }
+
+    @ViewBuilder
+    private var viewDetailsButton: some View {
+        Button("查看详情", action: { model.tab = .environment })
+            .buttonStyle(GlassButtonStyle())
     }
 
     private func pillColor(_ state: ServiceState) -> Color {
@@ -408,49 +400,7 @@ struct OverviewView: View {
     }
 }
 
-struct EnvRow: View {
-    @EnvironmentObject private var theme: GlassTheme
-    let item: EnvCheckItem
-    var onTap: (() -> Void)? = nil
-
-    var body: some View {
-        HStack(alignment: .top, spacing: 10) {
-            Image(systemName: symbol)
-                .foregroundColor(color)
-                .frame(width: 18)
-            VStack(alignment: .leading, spacing: 1) {
-                Text(item.name).fontWeight(.medium)
-                Text(item.detail).font(.caption).foregroundColor(.launcherSecondary)
-            }
-            Spacer(minLength: 0)
-        }
-        .padding(10)
-        .glassSurface(cornerRadius: 10, opacity: theme.opacity)
-        .contentShape(Rectangle())
-        .onTapGesture {
-            onTap?()
-        }
-    }
-
-    private var symbol: String {
-        switch item.status {
-        case .ok: return "checkmark.circle.fill"
-        case .warn: return "exclamationmark.triangle.fill"
-        case .fail: return "xmark.octagon.fill"
-        }
-    }
-
-    private var color: Color {
-        switch item.status {
-        case .ok: return .launcherGreen
-        case .warn: return .launcherOrange
-        case .fail: return .launcherRed
-        }
-    }
-}
-
 struct EnvDetailRow: View {
-    @EnvironmentObject private var theme: GlassTheme
     let item: EnvCheckItem
 
     var body: some View {
@@ -475,7 +425,7 @@ struct EnvDetailRow: View {
             Spacer(minLength: 0)
         }
         .padding(10)
-        .glassSurface(cornerRadius: 10, opacity: theme.opacity)
+        .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 10))
     }
 
     private var statusText: String {
@@ -519,26 +469,6 @@ struct ServicesView: View {
                     debuggerCard
                     mcpCard
                 }
-
-                SectionTitle(text: "环境检查详情")
-                HStack {
-                    Text("共 \(model.env.checks.count) 项 · \(model.env.failCount) 项失败 · \(model.env.warnCount) 项警告")
-                        .font(.caption)
-                        .foregroundColor(.launcherSecondary)
-                    Spacer(minLength: 0)
-                    Button("刷新") {
-                        model.refreshEnv()
-                    }
-                    .controlSize(.small)
-                }
-                .padding(.bottom, 8)
-
-                VStack(spacing: 8) {
-                    ForEach(model.env.checks) { item in
-                        EnvDetailRow(item: item)
-                    }
-                }
-
             }
         }
     }
@@ -560,10 +490,13 @@ struct ServicesView: View {
             HStack(spacing: 8) {
                 Button(debugger.state.isRunning ? "重启" : "启动",
                        action: debugger.state.isRunning ? model.restartDebugger : model.startDebugger)
+                    .buttonStyle(GlassButtonStyle(tint: debugger.state.isRunning ? Color.launcherOrange : Color.accentColor))
                     .disabled(debugger.state.isBusy)
                 Button("关闭", role: .destructive, action: model.stopDebugger)
+                    .buttonStyle(GlassButtonStyle())
                     .disabled(!debugger.state.isRunning || debugger.state.isBusy)
                 Button("打开 DevTools", action: AppModel.openDevTools)
+                    .buttonStyle(GlassButtonStyle())
                     .disabled(!debugger.state.isRunning)
             }
             .controlSize(.small)
@@ -586,10 +519,13 @@ struct ServicesView: View {
             HStack(spacing: 8) {
                 Button(mcp.state.isRunning ? "重启" : "启动",
                        action: mcp.state.isRunning ? model.restartMCP : model.startMCP)
+                    .buttonStyle(GlassButtonStyle(tint: mcp.state.isRunning ? Color.launcherOrange : Color.accentColor))
                     .disabled(mcp.state.isBusy)
                 Button("关闭", role: .destructive, action: model.stopMCP)
+                    .buttonStyle(GlassButtonStyle())
                     .disabled(!mcp.state.isRunning || mcp.state.isBusy)
                 Button("复制注册配置", action: copyConfig)
+                    .buttonStyle(GlassButtonStyle())
                     .disabled(!mcp.state.isRunning)
             }
             .controlSize(.small)
@@ -617,6 +553,86 @@ struct ServicesView: View {
         let pasteboard = NSPasteboard.general
         pasteboard.clearContents()
         pasteboard.setString(model.mcpConfigJSON, forType: .string)
+    }
+}
+
+struct EnvironmentView: View {
+    @EnvironmentObject private var model: AppModel
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 0) {
+                PageHeader(title: "环境检查", subtitle: "检测调试器与 MCP 服务依赖，缺失项可一键自动安装")
+
+                LauncherCard {
+                    HStack {
+                        Label("环境状态", systemImage: "checkmark.shield")
+                            .font(.headline)
+                        Spacer()
+                        StatusPill(
+                            text: model.env.failCount > 0 ? "\(model.env.failCount) 项失败"
+                                 : (model.env.warnCount > 0 ? "\(model.env.warnCount) 个警告" : "全部通过"),
+                            color: model.env.failCount > 0 ? .launcherRed
+                                 : (model.env.warnCount > 0 ? .launcherOrange : .launcherGreen)
+                        )
+                    }
+                    Text("\(model.env.okCount) / \(model.env.checks.count) 项通过")
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                    Text("Node \(model.env.nodePath) · Python \(model.env.pythonPath) · WeChat \(model.env.wechatVersion)")
+                        .font(.caption)
+                        .foregroundColor(.launcherSecondary)
+                        .lineLimit(2)
+                }
+
+                HStack(spacing: 10) {
+                    Button {
+                        Task { await model.checkAndInstallEnvironment() }
+                    } label: {
+                        Label(
+                            model.isCheckingEnvironment ? "检测中…" : "检测环境",
+                            systemImage: model.isCheckingEnvironment
+                                ? "arrow.triangle.2.circlepath"
+                                : "checkmark.seal"
+                        )
+                    }
+                    .buttonStyle(GlassButtonStyle(tint: Color.accentColor))
+                    .disabled(model.isCheckingEnvironment)
+
+                    Button("刷新") {
+                        model.refreshEnv()
+                    }
+                    .buttonStyle(GlassButtonStyle())
+
+                    if model.isCheckingEnvironment {
+                        ProgressView()
+                            .controlSize(.small)
+                    }
+                    Spacer(minLength: 0)
+                }
+                .padding(.top, 12)
+                .padding(.bottom, 8)
+
+                if !model.installMessage.isEmpty {
+                    Text(model.installMessage)
+                        .font(.caption)
+                        .foregroundColor(.launcherSecondary)
+                        .lineLimit(3)
+                        .padding(.bottom, 8)
+                }
+
+                Text("共 \(model.env.checks.count) 项 · \(model.env.failCount) 项失败 · \(model.env.warnCount) 项警告")
+                    .font(.caption)
+                    .foregroundColor(.launcherSecondary)
+                    .padding(.bottom, 8)
+
+                VStack(spacing: 8) {
+                    ForEach(model.env.checks) { item in
+                        EnvDetailRow(item: item)
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -718,12 +734,14 @@ struct LogsView: View {
                 } label: {
                     Label("复制", systemImage: "doc.on.doc")
                 }
+                .buttonStyle(GlassButtonStyle())
 
                 Button(role: .destructive) {
                     logStore.clear()
                 } label: {
                     Label("清空", systemImage: "trash")
                 }
+                .buttonStyle(GlassButtonStyle())
             }
             .padding(.bottom, 12)
 
@@ -830,7 +848,9 @@ struct ToolsView: View {
                                         tool: tool,
                                         isSelected: selection.selectedTool?.id == tool.id
                                     ) {
-                                        selection.selectedTool = tool
+                                        withAnimation(.spring(response: 0.32, dampingFraction: 0.82)) {
+                                            selection.selectedTool = tool
+                                        }
                                     }
                                 }
                             }
@@ -875,7 +895,6 @@ struct ToolsView: View {
 }
 
 struct ToolChip: View {
-    @EnvironmentObject private var theme: GlassTheme
     let tool: ToolInfo
     let isSelected: Bool
     let onSelect: () -> Void
@@ -885,22 +904,17 @@ struct ToolChip: View {
             Text(tool.name)
                 .font(.system(size: 12, design: .monospaced))
                 .lineLimit(1)
+                .foregroundColor(isSelected ? Color.white : Color.primary.opacity(0.82))
                 .padding(.horizontal, 10)
                 .padding(.vertical, 6)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .contentShape(Rectangle())
+                .contentShape(RoundedRectangle(cornerRadius: 8))
         }
         .buttonStyle(.plain)
-        .glassSurface(cornerRadius: 8, opacity: theme.opacity * 0.75)
-        .background(
-            isSelected ? Color.accentColor.opacity(0.16) : Color.clear,
+        .glassEffect(
+            isSelected ? .regular.tint(.accentColor).interactive() : .regular.interactive(),
             in: RoundedRectangle(cornerRadius: 8)
         )
-        .overlay(
-            RoundedRectangle(cornerRadius: 8)
-                .stroke(isSelected ? Color.accentColor : Color.white.opacity(0.16), lineWidth: isSelected ? 1.5 : 1)
-        )
-        .foregroundColor(isSelected ? Color.accentColor : .primary)
     }
 }
 
@@ -969,9 +983,11 @@ struct SettingsView: View {
                     } label: {
                         Label(uiState.copied ? "已复制" : "复制配置", systemImage: uiState.copied ? "checkmark" : "doc.on.doc")
                     }
+                    .buttonStyle(GlassButtonStyle())
                     Button(action: openClaudeConfig) {
                         Label("打开 Claude Desktop 配置", systemImage: "arrow.up.right.square")
                     }
+                    .buttonStyle(GlassButtonStyle())
                 }
                 .controlSize(.regular)
 

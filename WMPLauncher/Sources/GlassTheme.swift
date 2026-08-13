@@ -144,35 +144,21 @@ extension View {
 
 struct GlassButtonStyle: ButtonStyle {
     var tint: Color? = nil
-    var opacity: Double = GlassTheme.defaultOpacity
 
     func makeBody(configuration: Configuration) -> some View {
-        configuration.label
+        let effectiveTint: Color? = tint ?? (configuration.role == .destructive ? Color.launcherRed : nil)
+        let glass: Glass = effectiveTint.map { Glass.regular.tint($0).interactive() } ?? Glass.regular.interactive()
+
+        return configuration.label
             .font(.callout)
-            .foregroundColor(tint == nil ? GlassPalette.text : .white)
+            .lineLimit(1)
+            .truncationMode(.tail)
+            .foregroundColor(effectiveTint == nil ? Color.primary : Color.white)
             .padding(.horizontal, 12)
             .padding(.vertical, 7)
-            .background(
-                ZStack {
-                    GlassBackground(
-                        material: .hudWindow,
-                        blendingMode: .withinWindow,
-                        cornerRadius: 8,
-                        opacity: configuration.isPressed ? 0.55 : opacity
-                    )
-                    if let tint {
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(tint.opacity(configuration.isPressed ? 0.22 : 0.38))
-                    }
-                }
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 8)
-                    .stroke((tint ?? GlassPalette.hairline).opacity(0.35), lineWidth: 1)
-            )
-            .shadow(color: Color.black.opacity(0.24), radius: 4, x: 0, y: 2)
-            .scaleEffect(configuration.isPressed ? 0.98 : 1.0)
-            .animation(.easeOut(duration: 0.10), value: configuration.isPressed)
+            .glassEffect(glass, in: RoundedRectangle(cornerRadius: 9))
+            .scaleEffect(configuration.isPressed ? 0.96 : 1.0)
+            .animation(.spring(response: 0.28, dampingFraction: 0.78), value: configuration.isPressed)
     }
 }
 
