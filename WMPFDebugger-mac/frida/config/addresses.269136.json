@@ -1,0 +1,13 @@
+{
+  "Arch" : {
+    "arm64" : {
+      "CDPFilterHookOffset" : "0x8436B98",
+      "LoadStartHookOffset" : "0x4F744C4",
+      "LoadStartHookOffset2" : "0x8444BD0",
+      "ResourceCachePolicyHookOffset" : "0x4FDC5BC",
+      "SceneOffset" : 456,
+      "StructOffset" : 1440
+    }
+  },
+  "Version" : 269136
+}

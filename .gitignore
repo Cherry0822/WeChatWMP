@@ -1,0 +1,28 @@
+# === 全局 ===
+.DS_Store
+*.log
+*.swp
+.idea/
+.vscode/
+
+# === WMPFDebugger-mac (Node.js) ===
+WMPFDebugger-mac/node_modules/
+WMPFDebugger-mac/dist/
+WMPFDebugger-mac/*.local
+WMPFDebugger-mac/.probe1*.js
+WMPFDebugger-mac/.probe1*-run.js
+
+# === WMPLauncher (Swift) ===
+WMPLauncher/.build/
+WMPLauncher/.swiftpm/
+WMPLauncher.app/
+WMPLauncher/*.xcodeproj/
+
+# === miniapp-reverse-mcp (Python) ===
+miniapp-reverse-mcp/.venv/
+miniapp-reverse-mcp/__pycache__/
+miniapp-reverse-mcp/**/__pycache__/
+miniapp-reverse-mcp/*.pyc
+miniapp-reverse-mcp/*.egg-info/
+miniapp-reverse-mcp/dist/
+miniapp-reverse-mcp/build/
