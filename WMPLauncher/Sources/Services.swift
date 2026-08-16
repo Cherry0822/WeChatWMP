@@ -206,7 +206,7 @@ final class MCPClient: ObservableObject {
                         DispatchQueue.main.async {
                             self.connected = true
                             self.state = .running
-                            self.appendLog("[mcp] MCP 握手完成，25 个工具可用")
+                            self.appendLog("[mcp] MCP 握手完成，\(ToolCatalog.all.count) 个工具可用")
                         }
                     case .failure(let error):
                         DispatchQueue.main.async {

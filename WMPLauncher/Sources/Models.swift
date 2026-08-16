@@ -8,6 +8,11 @@ enum LauncherTab: String, CaseIterable, Identifiable {
     case environment
     case logs
     case versions
+    case extraction
+    case routes
+    case cloud
+    case wxapi
+    case targets
     case tools
     case settings
 
@@ -20,6 +25,11 @@ enum LauncherTab: String, CaseIterable, Identifiable {
         case .environment: return "环境检查"
         case .logs: return "日志"
         case .versions: return "版本"
+        case .extraction: return "反编译"
+        case .routes: return "路由导航"
+        case .cloud: return "云函数"
+        case .wxapi: return "接口抓包"
+        case .targets: return "服务目标"
         case .tools: return "工具"
         case .settings: return "设置"
         }
@@ -32,6 +42,11 @@ enum LauncherTab: String, CaseIterable, Identifiable {
         case .environment: return "checkmark.shield"
         case .logs: return "doc.plaintext"
         case .versions: return "slider.horizontal.3"
+        case .extraction: return "shippingbox"
+        case .routes: return "point.topleft.down.to.point.bottomright.curvepath"
+        case .cloud: return "cloud"
+        case .wxapi: return "bolt.horizontal.circle"
+        case .targets: return "scope"
         case .tools: return "wrench.and.screwdriver"
         case .settings: return "gearshape"
         }
@@ -168,6 +183,74 @@ enum ToolCatalog {
                  desc: "精确覆盖率控制：start / take / stop。",
                  params: ["action", "reset", "limit"]),
 
+        ToolInfo(name: "list_wxapkg_files", group: "反编译", groupIcon: "shippingbox",
+                 desc: "列出微信小程序 wxapkg 包文件；不传 packages_dir 时自动识别 macOS 默认目录，可按 appid 过滤。",
+                 params: ["packages_dir", "appid"]),
+        ToolInfo(name: "extract_wxapkg", group: "反编译", groupIcon: "shippingbox",
+                 desc: "解密并解包指定 appid 的全部 wxapkg 文件，输出到 output_dir/decompiled。",
+                 params: ["appid", "packages_dir", "output_dir"]),
+        ToolInfo(name: "scan_extracted_code", group: "反编译", groupIcon: "shippingbox",
+                 desc: "扫描已解包目录中的 IP、域名、密钥、Token、手机号、JWT 等敏感信息，输出 report.json 和 report.html。",
+                 params: ["scan_dir", "output_dir", "custom_patterns_json"]),
+        ToolInfo(name: "extract_and_scan_wxapkg", group: "反编译", groupIcon: "shippingbox",
+                 desc: "一键完成：查找、解密、解包、敏感信息扫描。",
+                 params: ["appid", "packages_dir", "output_dir", "custom_patterns_json"]),
+
+        ToolInfo(name: "get_miniapp_route_config", group: "路由导航", groupIcon: "point.topleft.down.to.point.bottomright.curvepath",
+                 desc: "注入路由导航器，返回小程序页面、tabBar、appid、入口页、名称和当前路由。",
+                 params: []),
+        ToolInfo(name: "navigate_miniapp", group: "路由导航", groupIcon: "point.topleft.down.to.point.bottomright.curvepath",
+                 desc: "执行当前小程序导航：current / navigate / redirect / relaunch / back / refresh。",
+                 params: ["action", "route", "delta"]),
+        ToolInfo(name: "set_miniapp_redirect_guard", group: "路由导航", groupIcon: "point.topleft.down.to.point.bottomright.curvepath",
+                 desc: "开启或关闭小程序防强制跳转。",
+                 params: ["enabled"]),
+        ToolInfo(name: "list_miniapp_blocked_redirects", group: "路由导航", groupIcon: "point.topleft.down.to.point.bottomright.curvepath",
+                 desc: "查看被防跳转拦截的跳转记录。",
+                 params: []),
+
+        ToolInfo(name: "set_miniapp_debug", group: "调试开关", groupIcon: "ladybug",
+                 desc: "通过 wx.setEnableDebug 开启或关闭小程序内置 vConsole 调试面板。",
+                 params: ["enable"]),
+        ToolInfo(name: "get_miniapp_debug_state", group: "调试开关", groupIcon: "ladybug",
+                 desc: "获取当前小程序 debug 和 vConsole 状态。",
+                 params: []),
+
+        ToolInfo(name: "start_cloud_capture", group: "云函数", groupIcon: "cloud",
+                 desc: "注入 wx.cloud Hook 并开始捕获实际触发的云函数调用。",
+                 params: []),
+        ToolInfo(name: "poll_cloud_calls", group: "云函数", groupIcon: "cloud",
+                 desc: "拉取自上次轮询以来新捕获的云函数调用。",
+                 params: []),
+        ToolInfo(name: "stop_cloud_capture", group: "云函数", groupIcon: "cloud",
+                 desc: "停止云函数 Hook 并移除注入的包装函数。",
+                 params: []),
+        ToolInfo(name: "clear_cloud_calls", group: "云函数", groupIcon: "cloud",
+                 desc: "清空当前页面内的云函数捕获记录。",
+                 params: []),
+        ToolInfo(name: "call_cloud_function", group: "云函数", groupIcon: "cloud",
+                 desc: "按名称手动调用云函数，可传入 JSON data。",
+                 params: ["name", "data_json"]),
+        ToolInfo(name: "static_scan_cloud_functions", group: "云函数", groupIcon: "cloud",
+                 desc: "静态扫描已加载 JS 中的 callFunction、数据库 collection 和存储引用。",
+                 params: []),
+
+        ToolInfo(name: "start_wxapi_capture", group: "接口抓包", groupIcon: "bolt.horizontal.circle",
+                 desc: "注入 wx API Hook，开始捕获 login、request、storage、导航、支付等调用。",
+                 params: []),
+        ToolInfo(name: "poll_wxapi_calls", group: "接口抓包", groupIcon: "bolt.horizontal.circle",
+                 desc: "拉取自上次轮询以来新捕获的 wx API 调用。",
+                 params: []),
+        ToolInfo(name: "stop_wxapi_capture", group: "接口抓包", groupIcon: "bolt.horizontal.circle",
+                 desc: "停止 wx API Hook 并恢复原始方法。",
+                 params: []),
+        ToolInfo(name: "clear_wxapi_calls", group: "接口抓包", groupIcon: "bolt.horizontal.circle",
+                 desc: "清空 wx API 捕获记录。",
+                 params: []),
+        ToolInfo(name: "replay_wxapi_call", group: "接口抓包", groupIcon: "bolt.horizontal.circle",
+                 desc: "按名称重放某个已捕获的 wx API 调用。",
+                 params: ["name", "data_json"]),
+
         ToolInfo(name: "list_targets", group: "目标切换", groupIcon: "scope",
                  desc: "列出当前所有 target（AppService、WebView 等）。",
                  params: []),
@@ -177,7 +260,7 @@ enum ToolCatalog {
     ]
 
     static func groups() -> [(name: String, icon: String, tools: [ToolInfo])] {
-        let names = ["网络抓包", "源码分析", "断点调试", "运行时与性能", "目标切换"]
+        let names = ["网络抓包", "源码分析", "断点调试", "运行时与性能", "反编译", "路由导航", "调试开关", "云函数", "接口抓包", "目标切换"]
         return names.compactMap { name in
             let tools = all.filter { $0.group == name }
             guard let first = tools.first else { return nil }

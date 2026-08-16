@@ -7,6 +7,13 @@ const { execSync } = require("child_process");
 // 假设这些是 CommonJS 模块
 const codex = require("./third-party/RemoteDebugCodex.js");
 const messageProto = require("./third-party/WARemoteDebugProtobuf.js");
+const cloudHook = require("./cloud-hook.js");
+
+// JS 层网络捕获落盘
+const netCaptureLog = process.env.NET_CAPTURE_LOG || "/tmp/net-capture.log";
+const netLogStream = require("node:fs").createWriteStream(netCaptureLog, {
+    flags: "a",
+});
 
 class DebugMessageEmitter extends EventEmitter {}
 
@@ -36,6 +43,7 @@ const debug_server = () => {
     console.log(`[server] debug server running on ws://localhost:${DEBUG_PORT}`);
 
     let messageCounter = 0;
+    let lastDecodeErrorAt = 0;
 
     const onMessage = (message) => {
         DEBUG &&
@@ -48,11 +56,28 @@ const debug_server = () => {
                 messageProto.mmbizwxadevremote.WARemoteDebug_DebugMessage.decode(
                     message
                 );
+            if (process.env.DEBUG_CLOUD_HOOK) {
+                console.log(
+                    `[dbg] raw category=${decodedData.category} seq=${decodedData.seq} size=${message.length}`
+                );
+            }
             unwrappedData = codex.unwrapDebugMessageData(decodedData);
             DEBUG && console.log(`[client] [DEBUG] decoded data:`);
             DEBUG && console.dir(unwrappedData);
         } catch (e) {
-            console.error(`[client] err: ${e}`);
+            const now = Date.now();
+            if (now - lastDecodeErrorAt > 5000) {
+                console.error(`[client] err: ${e}`);
+                lastDecodeErrorAt = now;
+            }
+        }
+
+        if (process.env.DEBUG_CLOUD_HOOK && unwrappedData) {
+            let preview = "";
+            try {
+                preview = JSON.stringify(unwrappedData.data).slice(0, 300);
+            } catch (e) {}
+            console.log(`[dbg] unwrapped category=${unwrappedData.category} data=${preview}`);
         }
 
         if (unwrappedData === null) {
@@ -63,16 +88,53 @@ const debug_server = () => {
             // 需要代理到 CDP 客户端
             debugMessageEmitter.emit("cdpmessage", unwrappedData.data.payload);
         }
+
+        // JS 层云函数 hook 结果解析
+        for (const line of cloudHook.handleIncoming(unwrappedData)) {
+            console.log(line);
+        }
+
+        // 运行时自带的网络调试事件（JS 层全量抓包）
+        if (
+            unwrappedData &&
+            unwrappedData.category === "customMessage" &&
+            unwrappedData.data &&
+            unwrappedData.data.method === "__networkDebug"
+        ) {
+            try {
+                const net = JSON.parse(unwrappedData.data.payload);
+                const m = net.method;
+                const p = net.params || {};
+                if (m === "Network.requestWillBeSent") {
+                    const r = p.request || {};
+                    const post = r.postData
+                        ? " post=" + JSON.stringify(String(r.postData).slice(0, 400))
+                        : "";
+                    const line = `[net] >> ${r.method || "?"} ${r.url || "(url-empty)"}${post}`;
+                    console.log(line);
+                    netLogStream.write(`${new Date().toISOString()} ${line}\n`);
+                } else if (m === "Network.responseReceived") {
+                    const resp = p.response || {};
+                    const line = `[net] << ${resp.status || "?"} ${p.type || ""} req=${p.requestId}`;
+                    console.log(line);
+                    netLogStream.write(`${new Date().toISOString()} ${line}\n`);
+                }
+            } catch (e) {
+                // 忽略解析失败
+            }
+        }
     };
 
     wss.on("connection", (ws) => {
         console.log("[conn] miniapp client connected");
+        cloudHook.start(ws);
         ws.on("message", onMessage);
         ws.on("error", (err) => {
             console.error("[client] err:", err);
         });
         ws.on("close", () => {
             console.log("[client] client disconnected");
+            cloudHook.stop();
         });
     });
 

@@ -1,0 +1,78 @@
+{
+  "errcode": "0",
+  "errmsg": "处理成功",
+  "data": [
+    {
+      "moduleId": "cs_entrance",
+      "title": "客服",
+      "refer": "wos-cs-chat",
+      "urlType": 1,
+      "url": {
+        "appId": null,
+        "h5Url": null,
+        "miniUrl": "/cms_webview/index?url=https://1137509473.cs.n.weimob.com/bos/cs/1137509473/6017475710473/23085648473/chat",
+        "linkType": 1,
+        "linkName": "客户咨询",
+        "channel": 1,
+        "url": "/cms_webview/index?url=https://1137509473.cs.n.weimob.com/bos/cs/1137509473/6017475710473/23085648473/chat",
+        "refer": null,
+        "selectedData": null,
+        "liveId": null,
+        "videoChannelsId": null,
+        "forceRecommendVid": null
+      },
+      "iconStyleType": 1,
+      "icon": "aux-customer",
+      "iconType": 1,
+      "logo": "",
+      "npmAddress": null,
+      "id": 243,
+      "extraParamMap": {
+        "kfAbilityProvider": 1,
+        "kfAbilityUrl": "https://1137509473.cs.n.weimob.com/bos/cs/1137509473/6017475710473/23085649473/chat"
+      },
+      "isDefaultHide": false,
+      "spread": null,
+      "packup": null,
+      "type": 0
+    },
+    {
+      "moduleId": "CMS_QUICKER_SHARE",
+      "title": "分享",
+      "refer": null,
+      "urlType": 2,
+      "url": null,
+      "iconStyleType": 1,
+      "icon": null,
+      "iconType": 2,
+      "logo": "https://image-c.weimobwmc.com/sass-admin/19c01d2b17ec40b18a0c06194a78bc8e.png",
+      "npmAddress": "CMS_QUICKER_SHARE",
+      "id": 242,
+      "extraParamMap": null,
+      "isDefaultHide": false,
+      "spread": null,
+      "packup": null,
+      "type": 0
+    },
+    {
+      "moduleId": null,
+      "title": null,
+      "refer": null,
+      "urlType": null,
+      "url": null,
+      "iconStyleType": 1,
+      "icon": null,
+      "iconType": null,
+      "logo": null,
+      "npmAddress": null,
+      "id": 1679384557223,
+      "extraParamMap": null,
+      "isDefaultHide": false,
+      "spread": "{\"icon\":{\"value\":\"https://cdn2.weimob.com/saas/@assets/saas-fe-basis-web-stc/cms-b-images/design/float-window/spread.png\"},\"title\":\"展开\"}",
+      "packup": "{\"icon\":{\"value\":\"https://cdn2.weimob.com/saas/@assets/saas-fe-basis-web-stc/cms-b-images/design/float-window/packup.png\"},\"title\":\"收起\"}",
+      "type": 999
+    }
+  ],
+  "globalTicket": "10630-1786724178.818-saas-w1-1635-102441489331",
+  "monitorTrackId": null
+}

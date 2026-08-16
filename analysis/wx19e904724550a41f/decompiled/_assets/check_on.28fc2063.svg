@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>选中</title>
+    <g id="210315订单管理" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="画板" transform="translate(-54.000000, -275.000000)">
+            <g id="1.iOS/3.Element/Checkbox/Cell-Off备份-10" transform="translate(54.000000, 275.000000)">
+                <path d="M16,8.09876543 C16,3.58162963 12.4183704,0 7.90123457,0 C3.58162963,0 0,3.58162963 0,8.09876543 C0,12.4183704 3.58162963,16 7.90123457,16 C12.4183704,16 16,12.4183704 16,8.09876543 Z" id="Fill-3" fill="#07C160"></path>
+                <path d="M6.90930735,10.209139 L4.70710678,8.00693843 L4,8.71404521 L6.43790283,11.151948 C6.69825236,11.4122976 7.12036235,11.4122976 7.38071187,11.151948 L12.4922198,6.04044011 L12.4922198,6.04044011 L11.785113,5.33333333 L6.90930735,10.209139 Z" id="Rectangle-47" fill="#FFFFFF"></path>
+            </g>
+        </g>
+    </g>
+</svg>

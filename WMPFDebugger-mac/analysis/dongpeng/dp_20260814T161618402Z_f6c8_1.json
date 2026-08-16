@@ -1,0 +1,327 @@
+{
+  "errcode": "0",
+  "errmsg": "处理成功",
+  "data": {
+    "settingInfoResponse": {
+      "animation": {
+        "type": 1,
+        "animationIcon": "1",
+        "logo": "https://cdn2.weimob.com/saas/@assets/saas-fe-basis-web-stc/cms-b-images/design/default-logo.png",
+        "logoType": 1,
+        "logoCategory": 1,
+        "loadingType": 1
+      },
+      "colorSchemeVo": {
+        "type": 1,
+        "colorMain": "#FA2C19",
+        "colorSecondary": "#FFA300",
+        "tagColor": "#FA2C19",
+        "priceColor": "#FA2C19",
+        "topNavBackGroundColor": "#FFFFFF",
+        "topNavContentColor": "#000000"
+      },
+      "techSupportLogoSetting": {
+        "logoType": 0,
+        "logoUrl": "https://image-c.weimobwmc.com/ol-6LFnP/c0ccb3db702144bebd4ec250636fa333.png",
+        "techWordsType": 0,
+        "techWords": ""
+      },
+      "currencyVo": {
+        "code": "CNY",
+        "currencyName": "人民币",
+        "currencyUnit": "元",
+        "currencySign": "¥",
+        "active": 1
+      },
+      "gzhEnabled": 1,
+      "collectMinigramStatus": 1,
+      "showShare": 1,
+      "imageQuality": 2,
+      "iconStyleType": 1,
+      "styleType": 2,
+      "disposablePriceSwitch": 1,
+      "sellPriceSwitch": 1,
+      "marketPriceSwitch": 1,
+      "disposablePrice": "一口价",
+      "sellPrice": "销售价",
+      "marketPrice": "市场价",
+      "markingPriceSetting": 1,
+      "showImageMark": 1,
+      "salesVolumeDisplaySetting": 0,
+      "guideFollowOfficialSetting": {
+        "followEnabled": 0,
+        "showPosition": 1,
+        "showStyle": 1,
+        "cornerStyle": 1
+      },
+      "normSetting": {
+        "guideEnabled": 0,
+        "guideStyle": {
+          "showPosition": 1,
+          "showStyle": 1,
+          "cornerStyle": 1
+        },
+        "guidePageInfoList": [
+          {
+            "tcode": null,
+            "productId": 1,
+            "productVersionId": null,
+            "productInstanceId": null,
+            "merchantId": null,
+            "bosId": null,
+            "vid": null,
+            "vidType": null,
+            "cid": null,
+            "bizVid": null,
+            "bizVidType": null,
+            "operationSource": null,
+            "wid": null,
+            "guideId": 1,
+            "productName": "cms",
+            "scope": null,
+            "label": "自定义装修页",
+            "refers": [
+              "cms-index",
+              "cms-design",
+              "cms-usercenter"
+            ],
+            "isChecked": 1,
+            "isCustomerStyle": 1,
+            "customerText": null
+          },
+          {
+            "tcode": null,
+            "productId": 145,
+            "productVersionId": null,
+            "productInstanceId": null,
+            "merchantId": null,
+            "bosId": null,
+            "vid": null,
+            "vidType": null,
+            "cid": null,
+            "bizVid": null,
+            "bizVidType": null,
+            "operationSource": null,
+            "wid": null,
+            "guideId": 2,
+            "productName": "mall",
+            "scope": null,
+            "label": "买单消费页",
+            "refers": [
+              "ec-order-consume"
+            ],
+            "isChecked": 0,
+            "isCustomerStyle": 1,
+            "customerText": null
+          },
+          {
+            "tcode": null,
+            "productId": 146,
+            "productVersionId": null,
+            "productInstanceId": null,
+            "merchantId": null,
+            "bosId": null,
+            "vid": null,
+            "vidType": null,
+            "cid": null,
+            "bizVid": null,
+            "bizVidType": null,
+            "operationSource": null,
+            "wid": null,
+            "guideId": 3,
+            "productName": "crm",
+            "scope": null,
+            "label": "优惠券列表",
+            "refers": [
+              "onecrm-coupon-list"
+            ],
+            "isChecked": 0,
+            "isCustomerStyle": 0,
+            "customerText": "优惠券（不支持自定义样式）"
+          },
+          {
+            "tcode": null,
+            "productId": 146,
+            "productVersionId": null,
+            "productInstanceId": null,
+            "merchantId": null,
+            "bosId": null,
+            "vid": null,
+            "vidType": null,
+            "cid": null,
+            "bizVid": null,
+            "bizVidType": null,
+            "operationSource": null,
+            "wid": null,
+            "guideId": 4,
+            "productName": "crm",
+            "scope": null,
+            "label": "充值页",
+            "refers": [
+              "onecrm-user-amount-recharge"
+            ],
+            "isChecked": 0,
+            "isCustomerStyle": 0,
+            "customerText": "充值页（不支持展示位置自定义）"
+          },
+          {
+            "tcode": null,
+            "productId": 146,
+            "productVersionId": null,
+            "productInstanceId": null,
+            "merchantId": null,
+            "bosId": null,
+            "vid": null,
+            "vidType": null,
+            "cid": null,
+            "bizVid": null,
+            "bizVidType": null,
+            "operationSource": null,
+            "wid": null,
+            "guideId": 5,
+            "productName": "crm",
+            "scope": null,
+            "label": "会员中心",
+            "refers": [
+              "onecrm-membership"
+            ],
+            "isChecked": 0,
+            "isCustomerStyle": 0,
+            "customerText": "会员中心（不支持展示位置自定义）"
+          },
+          {
+            "tcode": null,
+            "productId": 146,
+            "productVersionId": null,
+            "productInstanceId": null,
+            "merchantId": null,
+            "bosId": null,
+            "vid": null,
+            "vidType": null,
+            "cid": null,
+            "bizVid": null,
+            "bizVidType": null,
+            "operationSource": null,
+            "wid": null,
+            "guideId": 6,
+            "productName": "crm",
+            "scope": null,
+            "label": "权益卡中心",
+            "refers": [
+              "onecrm-membership-rights"
+            ],
+            "isChecked": 0,
+            "isCustomerStyle": 0,
+            "customerText": "权益卡中心（不支持展示位置自定义）"
+          },
+          {
+            "tcode": null,
+            "productId": 146,
+            "productVersionId": null,
+            "productInstanceId": null,
+            "merchantId": null,
+            "bosId": null,
+            "vid": null,
+            "vidType": null,
+            "cid": null,
+            "bizVid": null,
+            "bizVidType": null,
+            "operationSource": null,
+            "wid": null,
+            "guideId": 7,
+            "productName": "crm",
+            "scope": null,
+            "label": "优惠券领取页",
+            "refers": [
+              "onecrm-coupon-detail"
+            ],
+            "isChecked": 0,
+            "isCustomerStyle": 0,
+            "customerText": "优惠券（不支持展示位置自定义）"
+          },
+          {
+            "tcode": null,
+            "productId": 145,
+            "productVersionId": null,
+            "productInstanceId": null,
+            "merchantId": null,
+            "bosId": null,
+            "vid": null,
+            "vidType": null,
+            "cid": null,
+            "bizVid": null,
+            "bizVidType": null,
+            "operationSource": null,
+            "wid": null,
+            "guideId": 8,
+            "productName": "mall",
+            "scope": null,
+            "label": "支付成功页",
+            "refers": [
+              "ec-orderDetail-paidstatus"
+            ],
+            "isChecked": 0,
+            "isCustomerStyle": 1,
+            "customerText": null
+          }
+        ]
+      },
+      "grayEnabled": false,
+      "clipboardEnable": false
+    },
+    "bizInfoSettingModule": {
+      "startPage": {
+        "status": 0,
+        "startType": null,
+        "imageContent": null,
+        "videoContent": null,
+        "showSkipButton": null,
+        "skipButtonImage": null,
+        "skipButtonPosition": null,
+        "showLinkUrl": null,
+        "showLinkType": null,
+        "linkImageUrl": null,
+        "cutType": null,
+        "blankAreaColor": null,
+        "linkUrl": null
+      },
+      "couponSetting": {
+        "couponColor": "#FA2C19",
+        "colorType": 2,
+        "couponName": "优惠券",
+        "codeName": "优惠码"
+      },
+      "webviewURL": {
+        "white": null,
+        "black": null
+      },
+      "interfaceCacheConfig": {
+        "cacheConfig": "true"
+      },
+      "semiSyncSetting": "{\"ableReferList\":[\"ec-goods-detail\",\"cms-test-goods-detail\"]}",
+      "cmsAttachedFunction": "{\"clipboardRights\":[{\"group\":\"tiktok-coupon\",\"hasRights\":false}],\"cmsLinkSupportVars\":false}",
+      "isFreeBos": "[false]",
+      "popupPrivacyAggrementPage": "[\"ec-cart\"]",
+      "openCloudDecorationPageSetting": "{\"ec-goods-detail\":{\"status\":2}}",
+      "channelVisit": "{\"channelVisitList\":[{\"channelEnName\":\"WX-PC\",\"modifiable\":false,\"openFlag\":false}]}"
+    },
+    "extendSettingInfo": {},
+    "guide": {
+      "isGuideMode": false,
+      "guideVid": null,
+      "guiderGroupName": null
+    },
+    "downgradeReqInfo": {
+      "refers": null,
+      "allNoNeed": false,
+      "allNeed": true
+    },
+    "tcode": "weimob",
+    "tenantConfig": {
+      "h5Domain": "n.weimob.com",
+      "payDomain": "n.weimob.com"
+    }
+  },
+  "globalTicket": "18754-1786724178.438-saas-w1-1335-31581374790",
+  "monitorTrackId": null
+}

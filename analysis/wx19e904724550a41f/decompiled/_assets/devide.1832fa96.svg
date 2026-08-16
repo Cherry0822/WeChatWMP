@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="132px" height="1px" viewBox="0 0 132 1" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Group 8</title>
+    <g id="全" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="发起退款_未填写-copy-20" transform="translate(-122.000000, -2130.000000)">
+            <g id="Group-8" transform="translate(123.000000, 2130.000000)">
+                <line x1="9.71445147e-17" y1="0.5" x2="56" y2="0.5" id="Line" stroke-opacity="0.1" stroke="#000000" stroke-width="0.5" stroke-linecap="square"></line>
+                <line x1="74" y1="0.5" x2="130" y2="0.5" id="Line-Copy" stroke-opacity="0.1" stroke="#000000" stroke-width="0.5" stroke-linecap="square"></line>
+                <circle id="Oval" fill-opacity="0.1" fill="#000000" cx="65" cy="0.5" r="1"></circle>
+            </g>
+        </g>
+    </g>
+</svg>

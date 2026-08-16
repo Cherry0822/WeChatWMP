@@ -1,0 +1,14 @@
+{
+  "errcode": "0",
+  "errmsg": "处理成功",
+  "bizErrmsg": null,
+  "data": {
+    "totalAvailableCards": null,
+    "totalUsedCards": null,
+    "totalExpiredCards": null,
+    "cardCouponEnable": false,
+    "cardCouponName": null
+  },
+  "globalTicket": "10631-1786724202.766-saas-w1-1765-102441518664",
+  "monitorTrackId": "onecrm-coupon-custom-web-0a1c2d1e-496311-207"
+}

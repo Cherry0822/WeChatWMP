@@ -72,6 +72,36 @@ struct Versions_Previews: PreviewProvider {
     }
 }
 
+struct Extraction_Previews: PreviewProvider {
+    static var previews: some View {
+        PreviewRoot { ExtractionView() }
+    }
+}
+
+struct RouteNavigation_Previews: PreviewProvider {
+    static var previews: some View {
+        PreviewRoot { RouteNavigationView() }
+    }
+}
+
+struct CloudScan_Previews: PreviewProvider {
+    static var previews: some View {
+        PreviewRoot { CloudScanView() }
+    }
+}
+
+struct WxApiCapture_Previews: PreviewProvider {
+    static var previews: some View {
+        PreviewRoot { WxApiCaptureView(ui: WxApiCaptureState()) }
+    }
+}
+
+struct Target_Previews: PreviewProvider {
+    static var previews: some View {
+        PreviewRoot { TargetView() }
+    }
+}
+
 struct Tools_Previews: PreviewProvider {
     static var previews: some View {
         PreviewRoot { ToolsView() }

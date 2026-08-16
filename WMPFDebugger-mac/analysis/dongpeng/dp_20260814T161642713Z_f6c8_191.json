@@ -1,0 +1,13 @@
+{
+  "errcode": "0",
+  "errmsg": "处理成功",
+  "bizErrmsg": null,
+  "data": {
+    "count": 3,
+    "usedNum": 0,
+    "expiredNum": 1,
+    "couponNickname": "优惠券"
+  },
+  "globalTicket": "11001-1786724202.766-saas-w1-1752-35490209859",
+  "monitorTrackId": "onecrm-coupon-custom-web-0a1c081c-496311-629"
+}

@@ -1,0 +1,95 @@
+{
+  "errcode": "0",
+  "errmsg": "处理成功",
+  "data": {
+    "name": "商品分类",
+    "classifies": [
+      {
+        "id": 16060066450473,
+        "name": "东鹏饮料 | 夏日畅饮",
+        "parentId": 0,
+        "level": 1,
+        "imageUrl": null,
+        "classifyAdList": [],
+        "secondClassifyList": [
+          {
+            "id": 16060168450473,
+            "title": "补水啦 | 快速补充电解质",
+            "parentId": 16060066450473,
+            "level": null,
+            "imageUrl": "https://image-c.weimobwmc.com/ol-6NoGC/6bf0a25a49374d3caa8ea1057a16b7f4.png",
+            "goods": null
+          }
+        ],
+        "recommendClassifyList": [],
+        "url": null,
+        "goods": null
+      },
+      {
+        "id": 16060242450473,
+        "name": "东鹏特饮 | 夏日充能",
+        "parentId": 0,
+        "level": 1,
+        "imageUrl": null,
+        "classifyAdList": null,
+        "secondClassifyList": null,
+        "recommendClassifyList": null,
+        "url": null,
+        "goods": null
+      },
+      {
+        "id": 16060029450473,
+        "name": "新品上市 | 一起尝鲜",
+        "parentId": 0,
+        "level": 1,
+        "imageUrl": null,
+        "classifyAdList": null,
+        "secondClassifyList": null,
+        "recommendClassifyList": null,
+        "url": null,
+        "goods": null
+      }
+    ],
+    "specialClassifies": [],
+    "style": {
+      "pageType": null,
+      "showType": 0,
+      "navigateId": null,
+      "title": null,
+      "description": null,
+      "styleType": 1,
+      "categoryTemplateADStatus": 1,
+      "soldOutSign": 0,
+      "categoryNavigationList": null,
+      "styleExData": {
+        "showGoodsSaleNum": 1,
+        "showGoodsTag": 1,
+        "showCart": 1,
+        "showImage": 1,
+        "imageSize": 2,
+        "topNavBarColorStyle": 1,
+        "backColor": "#FFFFFF",
+        "contentColor": "#000000"
+      },
+      "departmentId": 0,
+      "vid": 6017475710473,
+      "shareImageConfig": 0,
+      "buyGuide": 1
+    },
+    "wechatShare": {
+      "title": "商品分类",
+      "content": "来自好友123的推荐",
+      "imageUrl": "https://image-c.weimobwmc.com/ol-6NoQb/523c28ac4cfe4980970263300cd2ba4d.jpg",
+      "url": null,
+      "shareUrl": {
+        "h5Url": "https://1137509473.shop.n.weimob.com/bos/shop/1137509473/6017475710473/23085609473/goods/classify/index?essharewid=12110079691&vid=6017475710473&share_vid=6017475710473&pmc=3%7C5.essharewid.0-3.vid.0-2%7C3%7C5.share_vid.86400",
+        "miniUrl": "/ec_shop/classify?productInstanceId=23085609473&vid=6017475710473&essharewid=12110079691&share_vid=6017475710473&pmc=3%7C5.essharewid.0-3.vid.0-2%7C3%7C5.share_vid.86400"
+      },
+      "hideShare": false
+    },
+    "test": null,
+    "modules": null
+  },
+  "globalTicket": "2276-1786724183.599-saas-w1-1673-101327835850",
+  "monitorTrackId": "6a7f3f579c13f96e8f377454"
+}

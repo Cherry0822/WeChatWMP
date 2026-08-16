@@ -5,6 +5,8 @@
       "LoadStartHookOffset" : "0x4F744C4",
       "LoadStartHookOffset2" : "0x8444BD0",
       "ResourceCachePolicyHookOffset" : "0x4FDC5BC",
+      "SSLPayloadReadOffset" : "0x9A8308",
+      "SSLPayloadWriteOffset" : "0x1357BAC",
       "SceneOffset" : 456,
       "StructOffset" : 1440
     }

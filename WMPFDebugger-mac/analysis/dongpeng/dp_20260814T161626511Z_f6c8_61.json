@@ -1,0 +1,186 @@
+{
+  "errcode": "0",
+  "errmsg": "处理成功",
+  "data": {
+    "url": "ec_shop/goods?classifyname=%25E7%25BB%258F%25E5%2585%25B8%25E7%2588%2586%25E6%25AC%25BE%2520%257C%2520%25E6%2589%25AB%25E7%25A0%2581%25E8%25B5%25A2%25E7%25BA%25A2%25E5%258C%2585&id=16059929450473&parentId=16060242450473&categoryid=16059929450473&essharewid=12110079691&vid=6017475710473&share_vid=6017475710473&pmc=3%7C5.essharewid.0-3.vid.0-2%7C3%7C5.share_vid.86400",
+    "extMap": [
+      {
+        "fieldName": "classifyname",
+        "fieldValue": "%25E7%25BB%258F%25E5%2585%25B8%25E7%2588%2586%25E6%25AC%25BE%2520%257C%2520%25E6%2589%25AB%25E7%25A0%2581%25E8%25B5%25A2%25E7%25BA%25A2%25E5%258C%2585",
+        "kinds": null
+      },
+      {
+        "fieldName": "id",
+        "fieldValue": "16059929450473",
+        "kinds": null
+      },
+      {
+        "fieldName": "parentId",
+        "fieldValue": "16060242450473",
+        "kinds": null
+      },
+      {
+        "fieldName": "categoryid",
+        "fieldValue": "16059929450473",
+        "kinds": null
+      },
+      {
+        "fieldName": "isqdzz",
+        "fieldValue": "",
+        "kinds": [
+          5
+        ]
+      },
+      {
+        "fieldName": "essharewid",
+        "fieldValue": "12110079691",
+        "kinds": [
+          3,
+          5
+        ]
+      },
+      {
+        "fieldName": "channelsource",
+        "fieldValue": "",
+        "kinds": [
+          2,
+          3,
+          5
+        ]
+      },
+      {
+        "fieldName": "tracepromotionid",
+        "fieldValue": "",
+        "kinds": [
+          2,
+          5
+        ]
+      },
+      {
+        "fieldName": "dcGuideTicket",
+        "fieldValue": "",
+        "kinds": [
+          1,
+          2,
+          3,
+          5
+        ]
+      },
+      {
+        "fieldName": "sdpTicket",
+        "fieldValue": "",
+        "kinds": [
+          1,
+          3,
+          5
+        ]
+      },
+      {
+        "fieldName": "recommendTicket",
+        "fieldValue": "",
+        "kinds": [
+          1,
+          3,
+          5
+        ]
+      },
+      {
+        "fieldName": "ec_openid",
+        "fieldValue": "",
+        "kinds": [
+          2
+        ]
+      },
+      {
+        "fieldName": "loginMode",
+        "fieldValue": "",
+        "kinds": [
+          2
+        ]
+      },
+      {
+        "fieldName": "ec_appid",
+        "fieldValue": "",
+        "kinds": [
+          2
+        ]
+      },
+      {
+        "fieldName": "from_args",
+        "fieldValue": "",
+        "kinds": [
+          2,
+          4,
+          5
+        ]
+      },
+      {
+        "fieldName": "qwzsKey",
+        "fieldValue": "",
+        "kinds": [
+          2,
+          4,
+          5
+        ]
+      },
+      {
+        "fieldName": "123",
+        "fieldValue": "",
+        "kinds": []
+      },
+      {
+        "fieldName": "vid",
+        "fieldValue": "6017475710473",
+        "kinds": [
+          3
+        ]
+      },
+      {
+        "fieldName": "livePriceId",
+        "fieldValue": "",
+        "kinds": [
+          2
+        ]
+      },
+      {
+        "fieldName": "livePriceType",
+        "fieldValue": "",
+        "kinds": [
+          2
+        ]
+      },
+      {
+        "fieldName": "traceCard",
+        "fieldValue": "",
+        "kinds": [
+          2
+        ]
+      },
+      {
+        "fieldName": "crmqwzsKey",
+        "fieldValue": "",
+        "kinds": [
+          2,
+          4,
+          5
+        ]
+      },
+      {
+        "fieldName": "share_vid",
+        "fieldValue": "6017475710473",
+        "kinds": [
+          2,
+          3,
+          5
+        ]
+      },
+      {
+        "fieldName": "pmc",
+        "fieldValue": "3|5.essharewid.0-3.vid.0-2|3|5.share_vid.86400",
+        "kinds": null
+      }
+    ]
+  },
+  "globalTicket": "31963-1786724186.546-saas-w1-1654-102452101788",
+  "monitorTrackId": "6a7f3f5ad4471f33d9be58e4"
+}

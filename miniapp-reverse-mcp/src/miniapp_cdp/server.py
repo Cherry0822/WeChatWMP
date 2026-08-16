@@ -352,6 +352,200 @@ async def switch_target(target_id: str) -> str:
     return await app.switch_target(target_id=target_id)
 
 
+
+@mcp.tool(
+    name="list_wxapkg_files",
+    description=(
+        "List wxapkg package files for one or all miniapp appids. "
+        "If packages_dir is omitted, the default macOS WeChat package directory is inferred. "
+        "Use this first to discover available appids before decrypting."
+    ),
+)
+async def list_wxapkg_files(packages_dir: str | None = None, appid: str | None = None) -> str:
+    return await app.list_wxapkg_files(packages_dir=packages_dir, appid=appid)
+
+
+@mcp.tool(
+    name="extract_wxapkg",
+    description=(
+        "Decrypt and unpack all wxapkg files for the given appid. "
+        "Output is written to output_dir/decompiled. If output_dir is omitted, "
+        "analysis/<appid>/decompiled is used under the MCP working directory."
+    ),
+)
+async def extract_wxapkg(appid: str, packages_dir: str | None = None, output_dir: str | None = None) -> str:
+    return await app.extract_wxapkg(appid=appid, packages_dir=packages_dir, output_dir=output_dir)
+
+
+@mcp.tool(
+    name="scan_extracted_code",
+    description=(
+        "Scan an extracted miniapp directory for sensitive information using built-in "
+        "and optional custom regex patterns. Writes report.json and report.html. "
+        "custom_patterns_json is an optional JSON object mapping category names to regex strings "
+        'or {"regex":"...","enabled":true/false}.'
+    ),
+)
+async def scan_extracted_code(scan_dir: str, output_dir: str | None = None, custom_patterns_json: str | None = None) -> str:
+    return await app.scan_extracted_code(scan_dir=scan_dir, output_dir=output_dir, custom_patterns_json=custom_patterns_json)
+
+
+@mcp.tool(
+    name="extract_and_scan_wxapkg",
+    description=(
+        "One-shot workflow: discover, decrypt, unpack, and sensitive-scan a miniapp by appid. "
+        "This is the recommended tool when the AI only knows the appid."
+    ),
+)
+async def extract_and_scan_wxapkg(appid: str, packages_dir: str | None = None, output_dir: str | None = None, custom_patterns_json: str | None = None) -> str:
+    return await app.extract_and_scan_wxapkg(appid=appid, packages_dir=packages_dir, output_dir=output_dir, custom_patterns_json=custom_patterns_json)
+
+
+
+@mcp.tool(
+    name="get_miniapp_route_config",
+    description=(
+        "Inject the route navigator into the selected miniapp target and return its pages, "
+        "tabBar pages, appid, entry page, display name, and current route as JSON."
+    ),
+)
+async def get_miniapp_route_config() -> str:
+    return await app.get_miniapp_route_config()
+
+
+@mcp.tool(
+    name="navigate_miniapp",
+    description=(
+        "Navigate the current miniapp using the injected window.nav controller. "
+        "action must be one of: current, navigate, redirect, relaunch, back, refresh."
+    ),
+)
+async def navigate_miniapp(action: str, route: str | None = None, delta: int = 1) -> str:
+    return await app.navigate_miniapp(action=action, route=route, delta=delta)
+
+
+@mcp.tool(
+    name="set_miniapp_redirect_guard",
+    description="Enable or disable the miniapp redirect guard that blocks forced redirectTo/reLaunch/navigateTo calls.",
+)
+async def set_miniapp_redirect_guard(enabled: bool) -> str:
+    return await app.set_miniapp_redirect_guard(enabled=enabled)
+
+
+@mcp.tool(
+    name="list_miniapp_blocked_redirects",
+    description="List redirects blocked by the miniapp redirect guard.",
+)
+async def list_miniapp_blocked_redirects() -> str:
+    return await app.list_miniapp_blocked_redirects()
+
+
+@mcp.tool(
+    name="set_miniapp_debug",
+    description="Enable or disable the miniapp built-in debug panel via wx.setEnableDebug.",
+)
+async def set_miniapp_debug(enable: bool) -> str:
+    return await app.set_miniapp_debug(enable=enable)
+
+
+@mcp.tool(
+    name="get_miniapp_debug_state",
+    description="Return the current miniapp debug/vConsole state as JSON.",
+)
+async def get_miniapp_debug_state() -> str:
+    return await app.get_miniapp_debug_state()
+
+
+
+@mcp.tool(
+    name="start_cloud_capture",
+    description="Inject wx.cloud hooks and start capturing real cloud function calls in the current miniapp.",
+)
+async def start_cloud_capture() -> str:
+    return await app.start_cloud_capture()
+
+
+@mcp.tool(
+    name="stop_cloud_capture",
+    description="Stop wx.cloud hooks and remove injected wrappers.",
+)
+async def stop_cloud_capture() -> str:
+    return await app.stop_cloud_capture()
+
+
+@mcp.tool(
+    name="poll_cloud_calls",
+    description="Poll newly captured cloud function calls since the last poll.",
+)
+async def poll_cloud_calls() -> str:
+    return await app.poll_cloud_calls()
+
+
+@mcp.tool(
+    name="clear_cloud_calls",
+    description="Clear the in-page cloud capture queue and reset polling offset.",
+)
+async def clear_cloud_calls() -> str:
+    return await app.clear_cloud_calls()
+
+
+@mcp.tool(
+    name="call_cloud_function",
+    description="Manually call a cloud function by name with optional JSON data.",
+)
+async def call_cloud_function(name: str, data_json: str | None = None) -> str:
+    return await app.call_cloud_function(name=name, data_json=data_json)
+
+
+@mcp.tool(
+    name="static_scan_cloud_functions",
+    description="Statically scan loaded scripts for callFunction, database collection, and storage references.",
+)
+async def static_scan_cloud_functions() -> str:
+    return await app.static_scan_cloud_functions()
+
+
+
+@mcp.tool(
+    name="start_wxapi_capture",
+    description="Inject wx API hooks and start capturing calls such as login, request, storage, navigation, and payment.",
+)
+async def start_wxapi_capture() -> str:
+    return await app.start_wxapi_capture()
+
+
+@mcp.tool(
+    name="poll_wxapi_calls",
+    description="Poll newly captured wx API calls since the last poll.",
+)
+async def poll_wxapi_calls() -> str:
+    return await app.poll_wxapi_calls()
+
+
+@mcp.tool(
+    name="stop_wxapi_capture",
+    description="Stop wx API hooks and restore original methods.",
+)
+async def stop_wxapi_capture() -> str:
+    return await app.stop_wxapi_capture()
+
+
+@mcp.tool(
+    name="clear_wxapi_calls",
+    description="Clear captured wx API calls and reset polling offset.",
+)
+async def clear_wxapi_calls() -> str:
+    return await app.clear_wxapi_calls()
+
+
+@mcp.tool(
+    name="replay_wxapi_call",
+    description="Replay a captured wx API by method name with optional JSON data.",
+)
+async def replay_wxapi_call(name: str, data_json: str | None = None) -> str:
+    return await app.replay_wxapi_call(name=name, data_json=data_json)
+
+
 def main() -> None:
     mcp.run()
 

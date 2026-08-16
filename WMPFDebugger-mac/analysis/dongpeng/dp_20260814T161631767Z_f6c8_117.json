@@ -1,0 +1,14 @@
+{
+  "errcode": "0",
+  "errmsg": "处理成功",
+  "bizErrmsg": null,
+  "data": {
+    "pageNum": 1,
+    "pageSize": 20,
+    "totalCount": 0,
+    "pageList": [],
+    "hasMore": false
+  },
+  "globalTicket": "2285-1786724191.838-saas-w1-1519-101327846388",
+  "monitorTrackId": "onecrm-coupon-custom-web-0a1c2d1e-496309-428"
+}

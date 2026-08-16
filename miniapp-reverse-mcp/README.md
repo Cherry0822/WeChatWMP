@@ -132,6 +132,52 @@ claude mcp add miniapp-reverse-mcp --transport stdio -- \
 | `start_cpu_profile` / `stop_cpu_profile` | 启动 / 停止 CPU 采样，并汇总热点函数 | `sampling_interval`；`limit`、`include_profile` |
 | `precise_coverage` | 精确覆盖率控制：`start` / `take` / `stop` | `action`、`reset`、`limit` |
 
+### 敏感信息提取
+
+| 工具 | 说明 | 常用参数 |
+| --- | --- | --- |
+| `list_wxapkg_files` | 列出微信小程序 wxapkg 包文件；不传 packages_dir 时自动识别 macOS 默认目录 | `packages_dir`、`appid` |
+| `extract_wxapkg` | 解密并解包指定 appid 的全部 wxapkg 文件 | `appid`、`packages_dir`、`output_dir` |
+| `scan_extracted_code` | 扫描解包目录中的 IP、域名、密钥、Token、手机号、JWT 等敏感信息 | `scan_dir`、`output_dir`、`custom_patterns_json` |
+| `extract_and_scan_wxapkg` | 一键查找、解密、解包并扫描指定 appid | `appid`、`packages_dir`、`output_dir`、`custom_patterns_json` |
+
+### 路由导航
+
+| 工具 | 说明 | 常用参数 |
+| --- | --- | --- |
+| `get_miniapp_route_config` | 注入路由导航器，返回页面、tabBar、appid、入口页和当前路由 | - |
+| `navigate_miniapp` | 执行路由导航：current / navigate / redirect / relaunch / back / refresh | `action`、`route`、`delta` |
+| `set_miniapp_redirect_guard` | 开启或关闭防强制跳转 | `enabled` |
+| `list_miniapp_blocked_redirects` | 查看被拦截的跳转记录 | - |
+
+### 调试开关
+
+| 工具 | 说明 | 常用参数 |
+| --- | --- | --- |
+| `set_miniapp_debug` | 通过 wx.setEnableDebug 开启或关闭内置调试面板 | `enable` |
+| `get_miniapp_debug_state` | 获取当前 debug 和 vConsole 状态 | - |
+
+### 云扫描
+
+| 工具 | 说明 | 常用参数 |
+| --- | --- | --- |
+| `start_cloud_capture` | 注入 wx.cloud Hook，开始捕获实际触发的云函数 | - |
+| `poll_cloud_calls` | 拉取自上次轮询以来新捕获的云函数 | - |
+| `stop_cloud_capture` | 停止 Hook 并移除注入包装 | - |
+| `clear_cloud_calls` | 清空页面内捕获记录 | - |
+| `call_cloud_function` | 按名称手动调用云函数 | `name`、`data_json` |
+| `static_scan_cloud_functions` | 静态扫描 callFunction、数据库 collection 和存储引用 | - |
+
+### WxAPI 捕获
+
+| 工具 | 说明 | 常用参数 |
+| --- | --- | --- |
+| `start_wxapi_capture` | 注入 wx API Hook，开始捕获 login、request、storage、导航、支付等调用 | - |
+| `poll_wxapi_calls` | 拉取新捕获的 wx API 调用 | - |
+| `stop_wxapi_capture` | 停止 Hook 并恢复原始方法 | - |
+| `clear_wxapi_calls` | 清空捕获记录 | - |
+| `replay_wxapi_call` | 按名称重放已捕获的 wx API | `name`、`data_json` |
+
 ### 目标切换
 
 | 工具 | 说明 | 常用参数 |
@@ -196,5 +242,9 @@ miniapp-reverse-mcp/
     ├── state_store.py        # 状态存储
     ├── event_bus.py          # CDP 事件分发
     ├── collectors/           # 单 target CDP 事件采集器
-    └── tools/                # 各领域工具实现（network / script / debugger / runtime / target / websocket）
+    ├── nav_inject.js         # 路由导航器注入脚本
+    ├── cloud_audit_inject.js # wx.cloud 捕获注入脚本
+    ├── wxapi_inject.js       # wx API 捕获注入脚本
+    ├── extraction/           # wxapkg 解密与敏感信息扫描引擎
+    └── tools/                # 各领域工具实现（network / script / debugger / runtime / target / websocket / extraction / navigator / debug / cloud / wxapi）
 ```

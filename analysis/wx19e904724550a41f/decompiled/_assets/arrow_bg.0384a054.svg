@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>arrow</title>
+    <g id="2.5-优化版本" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="案例展示半屏" transform="translate(-14.000000, -382.000000)" fill="#000000">
+            <g id="半屏" transform="translate(0.000000, 362.000000)">
+                <g id="arrow" transform="translate(14.000000, 20.000000)">
+                    <circle id="椭圆形" fill-opacity="0.03" cx="12" cy="12" r="12"></circle>
+                    <g id="Group" transform="translate(7.000000, 2.000000)" fill-opacity="0.9">
+                        <g id="Icons/Outlined/back复制" transform="translate(5.000000, 10.000000) scale(1, -1) rotate(-90.000000) translate(-5.000000, -10.000000) ">
+                            <path d="M0.833333333,6.25330075 L7.5,6.25330075 L7.5,6.25330075 L7.5,7.91996741 L1.66666667,7.91996741 L1.66666667,13.7533007 L0,13.7533007 L0,7.08663408 C-5.63628126e-17,6.62639679 0.373096042,6.25330075 0.833333333,6.25330075 Z" id="Combined-Shape" transform="translate(3.750000, 10.003301) rotate(135.000000) translate(-3.750000, -10.003301) "></path>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

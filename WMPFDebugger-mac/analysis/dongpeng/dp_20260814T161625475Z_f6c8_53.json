@@ -1,0 +1,71 @@
+{
+  "errcode": "0",
+  "errmsg": "处理成功",
+  "data": {
+    "name": "商品分类",
+    "classifies": [
+      {
+        "id": 16060242450473,
+        "name": null,
+        "parentId": null,
+        "level": null,
+        "imageUrl": null,
+        "classifyAdList": [],
+        "secondClassifyList": [
+          {
+            "id": 16059929450473,
+            "title": "经典爆款 | 扫码赢红包",
+            "parentId": 16060242450473,
+            "level": null,
+            "imageUrl": "https://image-c.weimobwmc.com/ol-6NoGC/3e4b8511c03140f0a846372a40c5bd5a.png",
+            "goods": null
+          }
+        ],
+        "recommendClassifyList": [],
+        "url": null,
+        "goods": null
+      }
+    ],
+    "specialClassifies": [],
+    "style": {
+      "pageType": null,
+      "showType": 0,
+      "navigateId": null,
+      "title": null,
+      "description": null,
+      "styleType": 1,
+      "categoryTemplateADStatus": 1,
+      "soldOutSign": 0,
+      "categoryNavigationList": null,
+      "styleExData": {
+        "showGoodsSaleNum": 1,
+        "showGoodsTag": 1,
+        "showCart": 1,
+        "showImage": 1,
+        "imageSize": 2,
+        "topNavBarColorStyle": 1,
+        "backColor": "#FFFFFF",
+        "contentColor": "#000000"
+      },
+      "departmentId": 0,
+      "vid": 6017475710473,
+      "shareImageConfig": 0,
+      "buyGuide": 1
+    },
+    "wechatShare": {
+      "title": "商品分类",
+      "content": "来自好友123的推荐",
+      "imageUrl": "https://image-c.weimobwmc.com/ol-6NoQb/523c28ac4cfe4980970263300cd2ba4d.jpg",
+      "url": null,
+      "shareUrl": {
+        "h5Url": "https://1137509473.shop.n.weimob.com/bos/shop/1137509473/6017475710473/23085609473/goods/classify/index?essharewid=12110079691&vid=6017475710473&share_vid=6017475710473&pmc=3%7C5.essharewid.0-3.vid.0-2%7C3%7C5.share_vid.86400",
+        "miniUrl": "/ec_shop/classify?productInstanceId=23085609473&vid=6017475710473&essharewid=12110079691&share_vid=6017475710473&pmc=3%7C5.essharewid.0-3.vid.0-2%7C3%7C5.share_vid.86400"
+      },
+      "hideShare": false
+    },
+    "test": null,
+    "modules": null
+  },
+  "globalTicket": "10627-1786724185.540-saas-w1-1688-102441497365",
+  "monitorTrackId": "6a7f3f599c13f96e8f377488"
+}

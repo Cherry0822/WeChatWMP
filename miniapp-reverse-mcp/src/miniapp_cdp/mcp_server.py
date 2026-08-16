@@ -1,6 +1,10 @@
 from __future__ import annotations
 
+import json
+
 from .cdp_runtime import CDPRuntime
+from .cloud_capture import CloudCapture
+from .wxapi_capture import WxApiCapture
 from .event_bus import EventBus
 from .network_capture import NetworkCaptureService
 from .state_store import StateStore
@@ -35,6 +39,30 @@ from .tools.runtime_tools import (
     stop_cpu_profile,
     precise_coverage,
 )
+from .tools.extraction_tools import (
+    list_wxapkg_files,
+    extract_wxapkg,
+    scan_extracted_code,
+    extract_and_scan_wxapkg,
+)
+from .tools.navigator_tools import (
+    get_miniapp_route_config,
+    navigate_miniapp,
+    set_miniapp_redirect_guard,
+    list_miniapp_blocked_redirects,
+)
+from .tools.debug_tools import (
+    set_miniapp_debug,
+    get_miniapp_debug_state,
+)
+from .tools.cloud_tools import (
+    start_cloud_capture,
+    stop_cloud_capture,
+    poll_cloud_calls,
+    clear_cloud_calls,
+    call_cloud_function,
+    static_scan_cloud_functions,
+)
 
 class MiniappCDPMCP:
     def __init__(self) -> None:
@@ -42,6 +70,8 @@ class MiniappCDPMCP:
         self.event_bus = EventBus()
         self.runtime = CDPRuntime(self.state_store, self.event_bus)
         self.network_capture = NetworkCaptureService()
+        self.cloud_capture = CloudCapture()
+        self.wxapi_capture = WxApiCapture()
 
     async def list_network_requests(
         self,
@@ -252,3 +282,75 @@ class MiniappCDPMCP:
 
     async def switch_target(self, target_id: str) -> str:
         return await switch_target(self.network_capture, target_id)
+
+    async def list_wxapkg_files(self, packages_dir: str | None = None, appid: str | None = None) -> str:
+        return await list_wxapkg_files(packages_dir=packages_dir, appid=appid)
+
+    async def extract_wxapkg(self, appid: str, packages_dir: str | None = None, output_dir: str | None = None) -> str:
+        return await extract_wxapkg(appid=appid, packages_dir=packages_dir, output_dir=output_dir)
+
+    async def scan_extracted_code(self, scan_dir: str, output_dir: str | None = None, custom_patterns_json: str | None = None) -> str:
+        return await scan_extracted_code(scan_dir=scan_dir, output_dir=output_dir, custom_patterns_json=custom_patterns_json)
+
+    async def extract_and_scan_wxapkg(self, appid: str, packages_dir: str | None = None, output_dir: str | None = None, custom_patterns_json: str | None = None) -> str:
+        return await extract_and_scan_wxapkg(appid=appid, packages_dir=packages_dir, output_dir=output_dir, custom_patterns_json=custom_patterns_json)
+
+    async def get_miniapp_route_config(self) -> str:
+        return await get_miniapp_route_config(self.network_capture)
+
+    async def navigate_miniapp(self, action: str, route: str | None = None, delta: int = 1) -> str:
+        return await navigate_miniapp(self.network_capture, action=action, route=route, delta=delta)
+
+    async def set_miniapp_redirect_guard(self, enabled: bool) -> str:
+        return await set_miniapp_redirect_guard(self.network_capture, enabled=enabled)
+
+    async def list_miniapp_blocked_redirects(self) -> str:
+        return await list_miniapp_blocked_redirects(self.network_capture)
+
+    async def set_miniapp_debug(self, enable: bool) -> str:
+        return await set_miniapp_debug(self.network_capture, enable=enable)
+
+    async def get_miniapp_debug_state(self) -> str:
+        return await get_miniapp_debug_state(self.network_capture)
+
+    async def start_cloud_capture(self) -> str:
+        return await start_cloud_capture(self.network_capture, self.cloud_capture)
+
+    async def stop_cloud_capture(self) -> str:
+        return await stop_cloud_capture(self.network_capture, self.cloud_capture)
+
+    async def poll_cloud_calls(self) -> str:
+        return await poll_cloud_calls(self.network_capture, self.cloud_capture)
+
+    async def clear_cloud_calls(self) -> str:
+        return await clear_cloud_calls(self.network_capture, self.cloud_capture)
+
+    async def call_cloud_function(self, name: str, data_json: str | None = None) -> str:
+        return await call_cloud_function(self.network_capture, self.cloud_capture, name=name, data_json=data_json)
+
+    async def static_scan_cloud_functions(self) -> str:
+        return await static_scan_cloud_functions(self.network_capture, self.cloud_capture)
+
+    async def start_wxapi_capture(self) -> str:
+        return json.dumps(await self.wxapi_capture.start(self.network_capture), ensure_ascii=False)
+
+    async def stop_wxapi_capture(self) -> str:
+        return json.dumps(await self.wxapi_capture.stop(self.network_capture), ensure_ascii=False)
+
+    async def poll_wxapi_calls(self) -> str:
+        return json.dumps(await self.wxapi_capture.poll(self.network_capture), ensure_ascii=False)
+
+    async def clear_wxapi_calls(self) -> str:
+        await self.wxapi_capture.clear(self.network_capture)
+        return json.dumps({"ok": True}, ensure_ascii=False)
+
+    async def replay_wxapi_call(self, name: str, data_json: str | None = None) -> str:
+        data = {}
+        if data_json:
+            try:
+                parsed = json.loads(data_json)
+                if isinstance(parsed, dict):
+                    data = parsed
+            except json.JSONDecodeError:
+                return json.dumps({"ok": False, "error": "data_json 不是有效 JSON"}, ensure_ascii=False)
+        return json.dumps(await self.wxapi_capture.replay(self.network_capture, name=name, data=data), ensure_ascii=False)

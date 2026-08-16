@@ -1,0 +1,111 @@
+{
+  "errcode": "0",
+  "errmsg": null,
+  "data": [
+    {
+      "id": 1137509473,
+      "bosId": 4022591939473,
+      "name": "默认应用包",
+      "defaultApp": true,
+      "productInstanceIds": [
+        {
+          "productId": 513521,
+          "productInstanceId": 23085608473
+        },
+        {
+          "productId": 145,
+          "productInstanceId": 23085609473
+        },
+        {
+          "productId": 146,
+          "productInstanceId": 23085610473
+        },
+        {
+          "productId": 224,
+          "productInstanceId": 23085614473
+        },
+        {
+          "productId": 207,
+          "productInstanceId": 23085617473
+        },
+        {
+          "productId": 210,
+          "productInstanceId": 23085618473
+        },
+        {
+          "productId": 222,
+          "productInstanceId": 23085620473
+        },
+        {
+          "productId": 215,
+          "productInstanceId": 23085627473
+        },
+        {
+          "productId": 337,
+          "productInstanceId": 23085628473
+        },
+        {
+          "productId": 165646,
+          "productInstanceId": 23085633473
+        },
+        {
+          "productId": 152,
+          "productInstanceId": 23085647473
+        },
+        {
+          "productId": 1,
+          "productInstanceId": 23085648473
+        },
+        {
+          "productId": 153,
+          "productInstanceId": 23085649473
+        },
+        {
+          "productId": 151,
+          "productInstanceId": 23085650473
+        },
+        {
+          "productId": 206,
+          "productInstanceId": 23085651473
+        },
+        {
+          "productId": 204,
+          "productInstanceId": 23085652473
+        },
+        {
+          "productId": 147,
+          "productInstanceId": 23085653473
+        },
+        {
+          "productId": 335,
+          "productInstanceId": 23085655473
+        },
+        {
+          "productId": 167423,
+          "productInstanceId": 23085656473
+        },
+        {
+          "productId": 203,
+          "productInstanceId": 23085657473
+        },
+        {
+          "productId": 535724,
+          "productInstanceId": 23085660473
+        },
+        {
+          "productId": 38442,
+          "productInstanceId": 23155854473
+        },
+        {
+          "productId": 21036,
+          "productInstanceId": 24012829473
+        }
+      ],
+      "deleted": false,
+      "creatTime": "2026-02-25T02:39:30.000+00:00",
+      "updateTime": "2026-02-25T02:39:30.000+00:00"
+    }
+  ],
+  "globalTicket": "21083-1786724178.979-saas-w1-1563-35556162827",
+  "monitorTrackId": "6a7f3f523ae25656dae3591f"
+}

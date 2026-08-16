@@ -1,0 +1,91 @@
+{
+  "base_resp": {
+    "ret": 0,
+    "err_msg": "",
+    "wxa_session": "qtLOmsLO2T8S2BX1Ps4f0OLctnlu52iUfuwFrjLcIlxHrRW32ge9p-LxGHMyAhXQ6y1xGpYK_l-NYRtcRYhSgw",
+    "wxa_session_expire": 1786731375,
+    "open_id": "o4YEg5S2Jc3usOPOtqZuGRmM15qk",
+    "dye_flag": 0,
+    "timestamp": 1786724176,
+    "is_test_env": false
+  },
+  "list": [
+    {
+      "drama_name": "狂龙下山",
+      "drama_id": "219258",
+      "full_path": "plugin-private://wx94a6522b1d640c3b/pages/playlet/playlet?dramaId=219258&srcAppid=wx714de419e475f4fb",
+      "media_id": "219173",
+      "coverurl": "https://wxaintpcos.wxqcloud.qq.com.cn/public/wx714de419e475f4fb/WxaDramaCoverImage/9f6087c56363030938e35b37e1cd4646.jpg",
+      "appid": "wx404dde55fb12df78",
+      "src_appid": "wx714de419e475f4fb",
+      "unique_drama_id": "1b9880b189a9c8918c745796f2be9057",
+      "playback_link": "https://1500021879.vodpreview.wxamedia.com/a299b592vodtranssh1500021879/4f914ccc5145403696654419384/v.f1708813.mp4?t=6a7f5b70&us=6a7f3f50c10a2a3d865b74eds3&sign=911c7c5a8b6ada7e88ba32c31cd6c827",
+      "preload_video_info": {
+        "serial_no": 1,
+        "play_url": "https://1500021879.vodpreview.wxamedia.com/a299b592vodtranssh1500021879/4f914ccc5145403696654419384/v.f1708813.mp4?t=6a7f5b70&us=6a7f3f50d81650605216aedes6&sign=38b3cc0013c8b6dacd89088eec30f430",
+        "expire_time": 1786731376,
+        "is_straight": true
+      }
+    },
+    {
+      "drama_name": "季总您的马甲叒掉了",
+      "drama_id": "100375",
+      "full_path": "plugin-private://wx94a6522b1d640c3b/pages/playlet/playlet?dramaId=100375&srcAppid=wxff7227a182af5a0a",
+      "media_id": "100262",
+      "coverurl": "https://wxaintpcos.wxqcloud.qq.com.cn/public/wxff7227a182af5a0a/WxaDramaCoverImage/4a2c5ef6fc77db39a3f9045a53ade266.jpg",
+      "appid": "wx404dde55fb12df78",
+      "src_appid": "wxff7227a182af5a0a",
+      "unique_drama_id": "",
+      "playback_link": "https://1500064577.vodpreview.wxamedia.com/cbf9c24cvodsh1500064577/d06bdd045001834806171439982/f0.mp4?t=6a7f5b70&us=6a7f3f506f1a2116bd38fa31s3&sign=00d927a95a2d3bdb836a0f2390a381b5",
+      "list_ranking": 7,
+      "preload_video_info": {
+        "serial_no": 1,
+        "play_url": "https://1500064577.vodpreview.wxamedia.com/cbf9c24cvodsh1500064577/d06bdd045001834806171439982/f0.mp4?t=6a7f5b70&us=6a7f3f5095c2cd18c22f4cf5s6&sign=a2bbda7e3934c2e22cb4e2279dbef851",
+        "expire_time": 1786731376,
+        "is_straight": true
+      }
+    },
+    {
+      "drama_name": "众人嘲我废物直到我亮出银针",
+      "drama_id": "192880",
+      "full_path": "plugin-private://wx94a6522b1d640c3b/pages/playlet/playlet?dramaId=192880&srcAppid=wxc4204a596b0153e2",
+      "media_id": "192860",
+      "coverurl": "https://wxaintpcos.wxqcloud.qq.com.cn/public/wxc4204a596b0153e2/WxaDramaCoverImage/7cc936e2bfe1fbc06023410e9ddf026f.jpg",
+      "appid": "wx404dde55fb12df78",
+      "src_appid": "wxc4204a596b0153e2",
+      "unique_drama_id": "",
+      "playback_link": "https://y7useszhdtivw.vodpreview.wxamedia.com/cbd7ceeavodsh1500048825/cb636fd75001834813539135331/f0.mp4?t=6a7f5b70&us=6a7f3f50ec8bc9c07ea94726s3&sign=17e5334218cf34662a2d79413aacbd6a",
+      "list_ranking": 29,
+      "preload_video_info": {
+        "serial_no": 1,
+        "play_url": "https://y7useszhdtivw.vodpreview.wxamedia.com/cbd7ceeavodsh1500048825/cb636fd75001834813539135331/f0.mp4?t=6a7f5b70&us=6a7f3f504357f1b97f8da7fcs6&sign=e2bdf5a3d0fa7a05202ac9b82421fef6",
+        "expire_time": 1786731376,
+        "is_straight": true
+      }
+    },
+    {
+      "drama_name": "证言真相",
+      "drama_id": "794061",
+      "full_path": "plugin-private://wx94a6522b1d640c3b/pages/playlet/playlet?dramaId=794061&srcAppid=wx1098f98e2382a59f",
+      "media_id": "772859",
+      "coverurl": "https://wxaintpcos.wxqcloud.qq.com.cn/public/wx1098f98e2382a59f/WxaDramaCoverImage/bf7b1f9113a572f91ee0f5cf64272637.jpg",
+      "appid": "wx404dde55fb12df78",
+      "src_appid": "wx1098f98e2382a59f",
+      "unique_drama_id": "d782848d5eb0c5c7fbb340af52025980",
+      "friend_visit_count": 2,
+      "playback_link": "https://npxecgshnmjwu.vodpreview.wxamedia.com/cbe8cacavodsh1500056754/1d1b341b5001834814530255277/f0.mp4?t=6a7f5b70&us=6a7f3f5070d57070c6919993s3&sign=c02749fb90717333f9e24ecc895fb09b",
+      "preload_video_info": {
+        "serial_no": 1,
+        "play_url": "https://npxecgshnmjwu.vodpreview.wxamedia.com/cbe8cacavodsh1500056754/1d1b341b5001834814530255277/f0.mp4?t=6a7f5b70&us=6a7f3f50cfda651345a207b8s6&sign=ee81b6f8794e12ec3b84dc32a78126d1",
+        "expire_time": 1786731376,
+        "is_straight": true
+      }
+    }
+  ],
+  "status": 0,
+  "expt_value": "1",
+  "list_recmd": [],
+  "list_op": [],
+  "style_expt_value": 1,
+  "discovery_jump_tab": 0
+}

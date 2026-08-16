@@ -17,7 +17,7 @@ async def list_targets(network_capture: NetworkCaptureService) -> str:
         md.append(f"   Title: {t.title}")
         md.append(f"   URL: {t.url}")
         
-    md.append("\n💡 Use switch_target(target_id) to switch to the AppService or another WebView thread.")
+    md.append("\nUse switch_target(target_id) to switch to the AppService or another WebView thread.")
     return "\n".join(md)
 
 async def switch_target(network_capture: NetworkCaptureService, target_id: str) -> str:
@@ -41,4 +41,4 @@ async def switch_target(network_capture: NetworkCaptureService, target_id: str) 
     
     t = new_collector.selected_target
     title = t.title if t else "Unknown"
-    return f"✅ Successfully switched to target '{title}' (ID: {target_id}).\n\nNote: Previous network records and breakpoints have been cleared. You are now attached to a different thread."
+    return f"Switched to target '{title}' (ID: {target_id}).\n\nPrevious network records and breakpoints have been cleared. You are now attached to a different thread."

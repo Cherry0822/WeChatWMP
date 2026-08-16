@@ -116,6 +116,12 @@ devtools://devtools/bundled/inspector.html?ws=127.0.0.1:62000
 | `ResourceCachePolicyHookOffset` | 资源缓存策略函数，用于跳过缓存策略限制 |
 | `StructOffset` / `SceneOffset` | 场景结构体偏移，用于把入口场景改写为可调试场景 |
 
+云抓包（路线 B）额外字段（当前仅 269136 / arm64）：
+
+| 偏移字段 | 作用 |
+| --- | --- |
+| `SSLPayloadReadOffset` / `SSLPayloadWriteOffset` | NetworkService 进程中 BoringSSL 明文读写函数偏移，用于 TLS 层抓包 |
+
 **第 3 步** 运行生成脚本，脚本会以 `addresses.18788.json` 为模板生成新配置文件：
 
 ```bash
@@ -138,6 +144,39 @@ node scripts/generate-address.js 20008 0x4F744C4 0x8444BD0 0x8436B98 0x4FDC5BC 1
 ```text
 [frida] Loaded config for version: 20008 (arch: arm64)
 ```
+
+## 云函数/云开发抓包（路线 B，原生 TLS 层）
+
+macOS 端小程序网络请求由 WeChatAppEx 的 **NetworkService 子进程**（Chromium 网络栈）发出，
+云函数（`wx.cloud`）由基础库 JS（`WACloud.js`）实现，请求同样走该进程。本工具通过 Frida hook
+NetworkService 里的 BoringSSL 明文读写函数，在 TLS 解密后抓取 HTTP/1.1 与 HTTP/2 流量，
+并按连接（SSL 对象）分组输出。
+
+### 使用
+
+```bash
+# 需先满足：关闭 SIP、微信已运行、打开过至少一个小程序
+node scripts/run-cloud-capture.js
+```
+
+- 终端实时输出：`REQ/RESP`（HTTP/1.1）、`H2 HEADERS/DATA`（HTTP/2 帧）、`[CLOUD]` 标记
+- 完整原始报文写入 `/tmp/cloud-capture.log`（可用 `CLOUD_CAPTURE_LOG` 环境变量改路径）
+- 停止：Ctrl+C
+
+### 已知结论与限制
+
+1. 云函数调用**不走**主进程的 `operateWXData` 桥（二进制中不存在 `cloud`/`callFunction`
+   命令字面量），因此只 hook 主进程抓不到云函数。
+2. 实测云开发体验小程序（wxcf5102ada68a7ac9）的云函数流量：请求为 HTTP/2 GET
+   到 `sh.servicewechat.com` 网关（函数名/参数在 URL），**响应为 gzip 压缩 JSON**，
+   解压后即明文（剧集列表、openid、播放链接等），并非业务层 AES 加密。
+3. 微盟类小程序（茄皇/东鹏）的部分业务请求有 SDK 层加密（实测签到 body 为密文），
+   这类与微信云函数无关，需另行处理。
+4. HTTP/2 HEADERS 为 HPACK 压缩：`scripts/run-cloud-capture.js` 实时输出帧，
+   `tools/parse-cloud-capture.py` 可离线按连接还原 URL（连接需从建立开始捕获），
+   并对 gzip DATA 帧自动解压。
+5. 每次 WeChatAppEx 更新需重新定位两个 SSL 偏移：用
+   `tools/find_string_xrefs.py` 按 `SSL_write couldn` / `SSL_read` 字符串交叉引用回溯。
 
 ## 项目结构
 

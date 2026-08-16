@@ -1,0 +1,17 @@
+{
+  "errcode": "0",
+  "errmsg": "处理成功",
+  "bizErrmsg": null,
+  "data": {
+    "openCardConfigure": null,
+    "state": null,
+    "canReceive": 1,
+    "reachLimitType": null,
+    "code": "03297496327309959168",
+    "aliCode": null,
+    "loginResult": null,
+    "cmsChannelEnum": null
+  },
+  "globalTicket": "10634-1786724194.440-saas-w1-1699-102441508835",
+  "monitorTrackId": "onecrm-coupon-custom-web-0a1c2d1e-496310-472"
+}

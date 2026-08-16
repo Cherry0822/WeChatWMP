@@ -1,0 +1,11 @@
+{
+  "errcode": "0",
+  "errmsg": "处理成功",
+  "bizErrmsg": null,
+  "data": {
+    "isSubscribe": false,
+    "ids": []
+  },
+  "globalTicket": "10636-1786724189.336-saas-w1-1752-102441502255",
+  "monitorTrackId": "onecrm-coupon-custom-web-0a1c081c-496309-778"
+}

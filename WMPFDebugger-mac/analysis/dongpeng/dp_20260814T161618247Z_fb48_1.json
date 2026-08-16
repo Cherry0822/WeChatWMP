@@ -1,0 +1,640 @@
+{
+  "refreshStrategy": {
+    "on": "PageShow",
+    "maxAge": "10sec"
+  },
+  "refreshStrategyV2": [
+    {
+      "on": "Interval",
+      "maxAge": "10sec",
+      "appId": [
+        "wx3eb2aadead102b58",
+        "wx2921f644113ad181"
+      ]
+    },
+    {
+      "on": "PageShow",
+      "maxAge": "10sec"
+    }
+  ],
+  "request": {
+    "rules": [
+      {
+        "name": "queryUserInfo",
+        "url": [
+          "/onecrm/user/center/usercenter/queryUserInfo",
+          "/api3/onecrm/user/center/usercenter/queryUserInfo"
+        ],
+        "maxAge": "1sec"
+      },
+      {
+        "name": "kfc-getChannelInfo",
+        "url": [
+          "/kfc/user/sdk/getChannelInfo",
+          "/api3/kfc/user/sdk/getChannelInfo"
+        ],
+        "maxAge": "30sec"
+      },
+      {
+        "name": "getgoodsList",
+        "url": [
+          "/mall/navigation/goods/getGoodsList",
+          "/api3/mall/navigation/goods/getGoodsList"
+        ],
+        "maxAge": "5sec"
+      },
+      {
+        "appId": {
+          "exclude": [
+            "wxd5b4263ce4902580"
+          ]
+        },
+        "name": "switchResult",
+        "url": [
+          "/mall/navigation/system/page/switchResult",
+          "/api3/mall/navigation/system/page/switchResult"
+        ],
+        "maxAge": "2min"
+      },
+      {
+        "appId": {
+          "exclude": [
+            "wxd5b4263ce4902580"
+          ]
+        },
+        "name": "queryPageInfo",
+        "url": [
+          "/mp-decoration/web/page/queryPageInfo",
+          "/api3/mp-decoration/web/page/queryPageInfo"
+        ],
+        "maxAge": "1min",
+        "data": {
+          "type": "object",
+          "value": {
+            "semiSyncRequest": "first"
+          }
+        }
+      },
+      {
+        "appId": {
+          "exclude": [
+            "wxd5b4263ce4902580"
+          ]
+        },
+        "name": "queryModuleDataSource",
+        "url": [
+          "/mp-decoration/web/page/queryModuleDataSource",
+          "/api3/mp-decoration/web/page/queryModuleDataSource"
+        ],
+        "maxAge": "1min",
+        "data": {
+          "type": "object",
+          "value": {
+            "moduleName": [
+              "@design-ec/goods-recommend",
+              "@design-ec-goods/old-goods-description-richtext"
+            ]
+          }
+        }
+      },
+      {
+        "appId": {
+          "exclude": [
+            "wxd5b4263ce4902580"
+          ]
+        },
+        "name": "oldQueryPageInfo",
+        "url": [
+          "/mall/navigation/goods/goodsDetail/queryPageInfo",
+          "/api3/mall/navigation/goods/goodsDetail/queryPageInfo"
+        ],
+        "maxAge": "1min"
+      },
+      {
+        "appId": {
+          "exclude": [
+            "wxd5b4263ce4902580"
+          ]
+        },
+        "name": "queryModuleData",
+        "url": [
+          "/mall/navigation/goods/goodsDetail/queryModuleData",
+          "/api3/mall/navigation/goods/goodsDetail/queryModuleData"
+        ],
+        "maxAge": "1min",
+        "data": {
+          "type": "object",
+          "value": {
+            "queryParameter.moduleId": {
+              "type": "number",
+              "value": ">=2"
+            }
+          }
+        }
+      },
+      {
+        "appId": {
+          "exclude": [
+            "wxd5b4263ce4902580"
+          ]
+        },
+        "name": "segment",
+        "url": [
+          "/mall/front/atmosphere/get",
+          "/api3/mall/front/atmosphere/get"
+        ],
+        "maxAge": "1min"
+      },
+      {
+        "appId": {
+          "exclude": [
+            "wxd5b4263ce4902580"
+          ]
+        },
+        "name": "goods",
+        "url": [
+          "/mall/navi/recommend/goods",
+          "/api3/mall/navi/recommend/goods"
+        ],
+        "maxAge": "1min"
+      }
+    ]
+  },
+  "requestRateLimiting": {
+    "enable": true,
+    "rules": [
+      {
+        "enable": true,
+        "appId": [
+          "wx94fd689bd3700e91"
+        ],
+        "dateRange": {
+          "begin": "2025-09-16 09:59",
+          "end": "2025-09-16 10:05"
+        },
+        "url": [
+          "/mall/trade/cart/getUserCart",
+          "/mall/trade/confirm/initConfirmOrder",
+          "/mall/trade/cart/getUserOtherStoreCart",
+          "/api3/mall/trade/cart/getUserCart",
+          "/api3/mall/trade/confirm/initConfirmOrder",
+          "/api3/mall/trade/cart/getUserOtherStoreCart"
+        ],
+        "delayTimeRange": {
+          "low": "1sec",
+          "high": "5sec"
+        },
+        "loading": {
+          "show": true,
+          "delay": "2sec"
+        }
+      },
+      {
+        "enable": true,
+        "appId": [
+          "wx94fd689bd3700e91"
+        ],
+        "dateRange": {
+          "begin": "2025-09-16 09:59",
+          "end": "2025-09-16 10:05"
+        },
+        "url": [
+          "/mall/trade/cart/addCartGoods",
+          "/mall/trade/cart/modifyCartGoods",
+          "/api3/mall/trade/cart/addCartGoods",
+          "/api3/mall/trade/cart/modifyCartGoods"
+        ],
+        "delayTimeRange": {
+          "low": "1sec",
+          "high": "5sec"
+        },
+        "loading": {
+          "show": true,
+          "delay": 0
+        }
+      },
+      {
+        "enable": true,
+        "appId": [
+          "wxbb33109e34128d60"
+        ],
+        "dateRange": {
+          "begin": "2025-06-13 09:59",
+          "end": "2025-06-13 10:05"
+        },
+        "url": [
+          "/mall/trade/cart/getUserCart",
+          "/mall/trade/confirm/initConfirmOrder",
+          "/mall/trade/cart/getUserOtherStoreCart",
+          "/api3/mall/trade/cart/getUserCart",
+          "/api3/mall/trade/confirm/initConfirmOrder",
+          "/api3/mall/trade/cart/getUserOtherStoreCart"
+        ],
+        "delayTimeRange": {
+          "low": "1sec",
+          "high": "5sec"
+        },
+        "loading": {
+          "show": true,
+          "delay": "2sec"
+        }
+      },
+      {
+        "enable": true,
+        "appId": [
+          "wxbb33109e34128d60"
+        ],
+        "dateRange": {
+          "begin": "2025-06-13 09:59",
+          "end": "2025-06-13 10:05"
+        },
+        "url": [
+          "/mall/trade/cart/addCartGoods",
+          "/mall/trade/cart/modifyCartGoods",
+          "/api3/mall/trade/cart/addCartGoods",
+          "/api3/mall/trade/cart/modifyCartGoods"
+        ],
+        "delayTimeRange": {
+          "low": "1sec",
+          "high": "5sec"
+        },
+        "loading": {
+          "show": true,
+          "delay": 0
+        }
+      },
+      {
+        "enable": true,
+        "appId": [
+          "wx34d2a2310ffc4800",
+          "wx35eb8d363d6b9f8d",
+          "wx5219074cbb6d3fbe"
+        ],
+        "dateRange": {
+          "begin": "2025-05-15 19:59:00",
+          "end": "2025-05-15 20:03:00"
+        },
+        "url": [
+          "/mall/trade/cart/getUserCart",
+          "/mall/trade/confirm/initConfirmOrder",
+          "/mall/trade/cart/getUserOtherStoreCart",
+          "/api3/mall/trade/cart/getUserCart",
+          "/api3/mall/trade/confirm/initConfirmOrder",
+          "/api3/mall/trade/cart/getUserOtherStoreCart"
+        ],
+        "delayTimeRange": {
+          "low": "1sec",
+          "high": "5sec"
+        },
+        "loading": {
+          "show": true,
+          "delay": "2sec"
+        }
+      },
+      {
+        "enable": true,
+        "appId": [
+          "wx34d2a2310ffc4800",
+          "wx35eb8d363d6b9f8d",
+          "wx5219074cbb6d3fbe"
+        ],
+        "dateRange": {
+          "begin": "2025-05-15 19:59:00",
+          "end": "2025-05-15 20:03:00"
+        },
+        "url": [
+          "/mall/trade/cart/addCartGoods",
+          "/mall/trade/cart/modifyCartGoods",
+          "/api3/mall/trade/cart/addCartGoods",
+          "/api3/mall/trade/cart/modifyCartGoods"
+        ],
+        "delayTimeRange": {
+          "low": "1sec",
+          "high": "5sec"
+        },
+        "loading": {
+          "show": true,
+          "delay": 0
+        }
+      },
+      {
+        "enable": true,
+        "appId": [
+          "wxae2922c8d30de695"
+        ],
+        "dateRange": {
+          "begin": "2025-05-21 09:59:00",
+          "end": "2025-05-21 10:03:00"
+        },
+        "url": [
+          "/mall/trade/cart/getUserCart",
+          "/mall/trade/confirm/initConfirmOrder",
+          "/mall/trade/cart/getUserOtherStoreCart",
+          "/api3/mall/trade/cart/getUserCart",
+          "/api3/mall/trade/confirm/initConfirmOrder",
+          "/api3/mall/trade/cart/getUserOtherStoreCart"
+        ],
+        "delayTimeRange": {
+          "low": "1sec",
+          "high": "5sec"
+        },
+        "loading": {
+          "show": true,
+          "delay": "2sec"
+        }
+      },
+      {
+        "enable": true,
+        "appId": [
+          "wxae2922c8d30de695"
+        ],
+        "dateRange": {
+          "begin": "2025-05-21 09:59:00",
+          "end": "2025-05-21 10:03:00"
+        },
+        "url": [
+          "/mall/trade/cart/addCartGoods",
+          "/mall/trade/cart/modifyCartGoods",
+          "/api3/mall/trade/cart/addCartGoods",
+          "/api3/mall/trade/cart/modifyCartGoods"
+        ],
+        "delayTimeRange": {
+          "low": "1sec",
+          "high": "5sec"
+        },
+        "loading": {
+          "show": true,
+          "delay": 0
+        }
+      },
+      {
+        "enable": true,
+        "appId": [
+          "wx326040fd315690c2"
+        ],
+        "dateRange": {
+          "begin": "2025-06-11 20:00:00",
+          "end": "2025-06-12 00:00:00"
+        },
+        "url": [
+          "/mall/trade/cart/getUserCart",
+          "/mall/trade/confirm/initConfirmOrder",
+          "/mall/trade/cart/getUserOtherStoreCart",
+          "/api3/mall/trade/cart/getUserCart",
+          "/api3/mall/trade/confirm/initConfirmOrder",
+          "/api3/mall/trade/cart/getUserOtherStoreCart"
+        ],
+        "delayTimeRange": {
+          "low": "1sec",
+          "high": "5sec"
+        },
+        "loading": {
+          "show": true,
+          "delay": "2sec"
+        }
+      },
+      {
+        "enable": true,
+        "appId": [
+          "wx326040fd315690c2"
+        ],
+        "dateRange": {
+          "begin": "2025-06-11 20:00:00",
+          "end": "2025-06-12 00:00:00"
+        },
+        "url": [
+          "/mall/trade/cart/addCartGoods",
+          "/mall/trade/cart/modifyCartGoods",
+          "/api3/mall/trade/cart/addCartGoods",
+          "/api3/mall/trade/cart/modifyCartGoods"
+        ],
+        "delayTimeRange": {
+          "low": "1sec",
+          "high": "5sec"
+        },
+        "loading": {
+          "show": true,
+          "delay": 0
+        }
+      }
+    ]
+  },
+  "requestThrottle": {
+    "enable": false,
+    "rules": [
+      {
+        "enable": true,
+        "appId": [
+          "wxf526d1b6c3f6a219"
+        ],
+        "dateRange": {
+          "begin": "2025-09-12 16:50:00",
+          "end": "2025-09-12 16:55:00"
+        },
+        "allowRatio": 0.2,
+        "bypassUrl": [
+          "https://track.weimob.com/api/v3/trace",
+          "https://statistic.weimobdc.com/wm.css",
+          "r/https:\\/\\/cdn2\\.weimob\\.com/"
+        ]
+      }
+    ]
+  },
+  "requestHost": {
+    "enable": true,
+    "rules": [
+      {
+        "appId": "wx0a31721c95b83714",
+        "host": "statistic.weimobdc.com",
+        "replaceWith": "statistic-clb.weimobdc.com"
+      },
+      {
+        "appId": "wx0a31721c95b83714",
+        "host": "xapi.weimob.com",
+        "replaceWith": "xapi-clb.weimob.com"
+      },
+      {
+        "appId": "wx0a31721c95b83714",
+        "host": "api.weimobwmc.com",
+        "replaceWith": "api-clb.weimobwmc.com"
+      },
+      {
+        "enable": false,
+        "appId": "wx0a31721c95b83714",
+        "host": "track.weimob.com",
+        "replaceWith": "track-clb.weimob.com"
+      },
+      {
+        "appId": "wx0a31721c95b83714",
+        "host": "capi.weimobcloud.com",
+        "replaceWith": "capi-clb.weimobcloud.com"
+      },
+      {
+        "appId": "wx0a31721c95b83714",
+        "host": "xapi.door-pickup.shzxtb.cn",
+        "replaceWith": "xapi.door-pickup-clb.shzxtb.cn"
+      }
+    ]
+  },
+  "waitingRoom": {
+    "rules": [
+      {
+        "enable": false,
+        "appId": [
+          "wxf526d1b6c3f6a219"
+        ],
+        "mode": "manual",
+        "intervalSeconds": 60,
+        "baseRatio": 0.5,
+        "incrRatio": 0,
+        "windowSeconds": 30,
+        "errorThreshold": 2,
+        "showRetryButton": false,
+        "retryDelaySeconds": 10
+      },
+      {
+        "enable": true,
+        "appId": [
+          "bosId:4022526273880"
+        ],
+        "mode": "auto",
+        "intervalSeconds": 60,
+        "baseRatio": 0.3,
+        "incrRatio": 0.5,
+        "windowSeconds": 30,
+        "errorThreshold": 1,
+        "retryDelaySeconds": 10
+      },
+      {
+        "enable": true,
+        "mode": "auto",
+        "intervalSeconds": 60,
+        "baseRatio": 0.3,
+        "incrRatio": 0.5,
+        "windowSeconds": 30,
+        "errorThreshold": 8,
+        "retryDelaySeconds": 10
+      }
+    ]
+  },
+  "miscSetting": [
+    {
+      "request": {
+        "queueLengthThreshold": 5
+      },
+      "liveMiniApp": {
+        "liveStreaming": [
+          {
+            "roomId": "10547296",
+            "appLiveCode": "olb844f1a6f921y2xnJY",
+            "mode": "auto",
+            "titleImgUrl": "https://image-c.weimobwmc.com/ol-6NpmD/e4f6195b76554abea2637667e00eb807.jpg"
+          }
+        ]
+      },
+      "compliance": {
+        "copywriting": [
+          {
+            "type": "media",
+            "title": "相机/相册权限调用",
+            "content": "需要访问相机/相册权限，用于您拍摄/上传图片或者视频。是否允许“<b>{{appName}}</b>”小程序访问？"
+          },
+          {
+            "type": "camera",
+            "title": "摄像头扫一扫权限调用",
+            "content": "需要访问摄像头扫一扫权限，用于您扫码购/上传海淘身份证件。是否允许“<b>{{appName}}</b>”小程序访问？"
+          }
+        ]
+      }
+    }
+  ],
+  "flowLimitingRequest": [
+    {
+      "statusCode": [
+        403,
+        566,
+        567
+      ]
+    },
+    {
+      "responseBody": [
+        {
+          "type": "string",
+          "value": "r/flow limiting/"
+        },
+        {
+          "type": "object",
+          "tryParseJson": true,
+          "value": [
+            {
+              "errcode": [
+                1429,
+                "1429"
+              ]
+            },
+            {
+              "code": {
+                "type": "object",
+                "value": {
+                  "errcode": [
+                    1429,
+                    "1429"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "url": "r/\\/mall\\/trade\\/cart\\//",
+      "responseBody": {
+        "type": "object",
+        "tryParseJson": true,
+        "value": {
+          "errcode": {
+            "type": "string",
+            "asStr": true,
+            "value": [
+              "00145021999999",
+              "0221999998",
+              "99999901000101"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "url": "r/\\/mall\\/trade\\/(?:confirm|settlement)\\//",
+      "responseBody": {
+        "type": "object",
+        "tryParseJson": true,
+        "value": {
+          "errcode": {
+            "type": "string",
+            "asStr": true,
+            "value": [
+              "00145021999999",
+              "0212000002",
+              "99999901000101"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "url": [
+        "r/\\/mall\\/navigation\\/goods\\//"
+      ],
+      "responseBody": {
+        "type": "object",
+        "tryParseJson": true,
+        "value": {
+          "errcode": "99999901000101"
+        }
+      }
+    }
+  ],
+  "$version": "202687180340"
+}

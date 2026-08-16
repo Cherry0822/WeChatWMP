@@ -1,0 +1,21 @@
+{
+  "errcode": 0,
+  "errmsg": "success",
+  "data": {
+    "open": true,
+    "kfAbilityProvider": 1,
+    "corpId": "",
+    "appId": "",
+    "kfAbilityUrl": "https://1137509473.cs.n.weimob.com/bos/cs/1137509473/6017475710473/23085649473/chat",
+    "customerSourceInfoParamList": [
+      "bosId",
+      "targetProductInstanceId",
+      "vid",
+      "originProductId",
+      "customerId",
+      "customerBrowsePageName",
+      "cid",
+      "originProductInstanceId"
+    ]
+  }
+}
