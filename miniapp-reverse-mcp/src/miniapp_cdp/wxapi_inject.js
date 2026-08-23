@@ -5,6 +5,7 @@
   }
 
   var calls = [];
+  var MAX_CALLS = 1000;
   var installed = false;
   var frameHooks = [];
 
@@ -24,6 +25,7 @@
     if (result !== undefined) item.result = result;
     if (error !== undefined) item.error = error;
     calls.push(item);
+    if (calls.length > MAX_CALLS) calls.splice(0, calls.length - MAX_CALLS);
   }
 
   function collectFrames() {

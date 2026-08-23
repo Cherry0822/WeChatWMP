@@ -112,10 +112,10 @@ collectors/single_target_network.py (SingleTargetNetworkCollector 核心采集�
 | 入口 | 协议 | 使用方 |
 |---|---|---|
 | `run_mcp_server.py`（`server.py` 的 FastMCP stdio） | MCP（JSON-RPC 2.0 over stdio） | AI 客户端（Claude Desktop / Codex 等，注册方式见 README） |
-| `run_runtime_server.py` + `runtime_dispatch.py` | 自定义 JSON 行协议：`{"id", "args":[...]}` → `{"id", "ok", "data"/"error"}`（单行换行分隔） | 为 Launcher 常驻调用设计（Swift 侧 `RuntimeDaemon` 已实现、暂未接线；当前视图走一次性 CLI） |
+| `run_runtime_server.py` | 自定义 JSON 行协议：`{"id", "args":[...]}` → `{"id", "ok", "data"/"error"}`（单行换行分隔） | Launcher 的常驻运行时，持有 CDP collector 与捕获状态 |
 | `run_runtime_cli.py` | 命令行单次调用（`route-config`、`cloud-start` 等子命令） | WMPLauncher 的 `RuntimeCommandRunner`（一次性进程） |
 
-`runtime_dispatch.py` 命令表：`route-config` / `route` / `redirect-guard` / `debug-state` / `set-debug` / `cloud-start|stop|poll|clear|static-scan|call` / `targets` / `targets-json` / `target-attach` / `wxapi-start|stop|poll|clear|replay`。超时/连接失败时 `run_runtime_server.py` 会自动 `reset_network()` 重建采集器。
+`run_runtime_server.py` 复用 `run_runtime_cli.py` 的命令表：`route-config` / `route` / `redirect-guard` / `debug-state` / `set-debug` / `cloud-start|stop|poll|clear|static-scan|call` / `targets` / `targets-json` / `target-attach` / `wxapi-start|stop|poll|clear|replay`。
 
 ### 3.4 注入式抓包（cloud / wxapi）
 
@@ -152,8 +152,8 @@ collectors/single_target_network.py (SingleTargetNetworkCollector 核心采集�
 |---|---|---|
 | `DebuggerService` | `env node src/index.js`（cwd 为 `WMPFDebugger-mac/`） | 启动/停止/重启调试器，管道实时收日志；停止先 `interrupt()`，4 秒未退再 `terminate()` |
 | `MCPClient` | `env python run_mcp_server_quiet.py`（cwd 为 `miniapp-reverse-mcp/`） | 以 JSON-RPC 2.0 over stdio 直接与 MCP 服务通信：`initialize`（protocolVersion `2025-06-18`）→ `notifications/initialized` → `tools/call`；请求 60s 超时；握手 10s 超时 |
-| `RuntimeCommandRunner` | `python run_runtime_cli.py <args>`（一次性，`RuntimeCLI.run` 同步执行） | 各功能 tab 的统一命令入口（route / cloud / wxapi / targets 等），超时由命令自身处理 |
-| `RuntimeDaemon` | `python run_runtime_server.py`（常驻，JSON 行协议） | **预留实现，当前未接线**：维护 `pending` 表按 id 配对响应（30s 超时），设计用于高频调用；目前所有视图仍走 `RuntimeCommandRunner` |
+| `RuntimeCommandRunner` | 有状态命令走 `python run_runtime_server.py`，无状态命令走 `run_runtime_cli.py` | Launcher 统一命令入口 |
+| `RuntimeDaemon` | `python run_runtime_server.py`（常驻，JSON 行协议） | 复用同一 `MiniappCDPMCP` 实例，保证捕获状态跨调用持续存在 |
 
 启动调试器前 `AppModel.startDebugger()` 会用 `PortChecker`（lsof 检查 `:9421` / `:62000`）探测端口占用，弹窗让用户选择「释放端口并启动 / 直接启动 / 取消」。
 
@@ -199,7 +199,7 @@ collectors/single_target_network.py (SingleTargetNetworkCollector 核心采集�
 | `mock_login.py` | 注入前端登录态（`loginStatus` / `userId` / `login_token` 等）让会员页可进入、可触发真实请求（后端网关仍会 432 拦截） |
 | `_analyze.py` | 快速探测：列出 targets / scripts / network 摘要 |
 
-> 通用调试命令统一走 `run_runtime_cli.py`（原 `mcp.py` CLI 已并入 `runtime_dispatch.py`，原 `_patch.py` 早期变体已由 `bypass.py` 取代，二者均已删除）。
+> 通用调试命令统一走 `run_runtime_cli.py`；Launcher 的有状态命令通过 `run_runtime_server.py` 执行。根目录专项脚本仍为独立调试入口。
 
 ---
 
@@ -259,7 +259,6 @@ WMP/
 │   │   ├── tools/             # 各领域工具实现
 │   │   ├── extraction/        # wxapkg 解密 + 敏感信息扫描
 │   │   ├── *_inject.js        # nav / cloud / wxapi 注入脚本
-│   │   └── runtime_dispatch.py# Launcher 用 JSON 行协议分发
 │   ├── run_mcp_server.py      # MCP stdio 入口
 │   ├── run_runtime_server.py  # Launcher 常驻 daemon 入口
 │   └── run_runtime_cli.py     # 单命令 CLI 入口

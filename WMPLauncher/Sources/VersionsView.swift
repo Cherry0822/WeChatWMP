@@ -222,7 +222,7 @@ struct VersionsView: View {
         .onAppear {
             editor.reload(projectRoot: model.projectRoot)
         }
-        .onChange(of: model.projectRoot) { _ in
+        .onChange(of: model.projectRoot) {
             editor.reload(projectRoot: model.projectRoot)
         }
     }

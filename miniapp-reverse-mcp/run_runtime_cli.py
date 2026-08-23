@@ -21,8 +21,8 @@ if str(SRC) not in sys.path:
 from miniapp_cdp.mcp_server import MiniappCDPMCP
 
 
-async def main_async(args) -> None:
-    app = MiniappCDPMCP()
+async def main_async(args, app: MiniappCDPMCP | None = None) -> None:
+    app = app or MiniappCDPMCP()
 
     if args.command == "route-config":
         print(await app.get_miniapp_route_config())

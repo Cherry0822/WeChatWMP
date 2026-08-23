@@ -1,6 +1,7 @@
 import Foundation
 import Combine
 import AppKit
+import ServiceManagement
 
 final class AppModel: ObservableObject {
     @Published var tab: LauncherTab = .overview
@@ -22,8 +23,14 @@ final class AppModel: ObservableObject {
         debuggerService.onLog = { [weak self] text in
             self?.logStore.append(.debugger, text)
         }
+        debuggerService.onUnexpectedTermination = { [weak self] in
+            self?.restartDebuggerAfterUnexpectedTermination()
+        }
         mcpClient.onLog = { [weak self] text in
             self?.logStore.append(.mcp, text)
+        }
+        mcpClient.onUnexpectedTermination = { [weak self] in
+            self?.restartMCPAfterUnexpectedTermination()
         }
     }
 
@@ -165,10 +172,60 @@ final class AppModel: ObservableObject {
 
     func restartMCP() {
         logStore.append(.launcher, "请求重启 MCP 服务")
-        mcp.stop()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) { [weak self] in
+        mcp.stop { [weak self] in
             self?.startMCP()
         }
+    }
+
+    func setLaunchAtLogin(_ enabled: Bool) -> Bool {
+        guard #available(macOS 13.0, *) else {
+            logStore.append(.launcher, "当前 macOS 版本不支持开机自启")
+            return false
+        }
+        do {
+            if enabled {
+                try SMAppService.mainApp.register()
+                logStore.append(.launcher, "已启用开机自启")
+            } else {
+                try SMAppService.mainApp.unregister()
+                logStore.append(.launcher, "已关闭开机自启")
+            }
+            return true
+        } catch {
+            logStore.append(.launcher, "更新开机自启失败：\(error.localizedDescription)")
+            return false
+        }
+    }
+
+    private func restartDebuggerAfterUnexpectedTermination() {
+        guard Self.setting("autoRestart", default: true) else { return }
+        logStore.append(.launcher, "调试器异常退出，1 秒后自动重启")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
+            guard let self, isRestartable(self.debugger.state) else { return }
+            self.startDebugger()
+        }
+    }
+
+    private func restartMCPAfterUnexpectedTermination() {
+        guard Self.setting("autoRestart", default: true) else { return }
+        logStore.append(.launcher, "MCP 服务异常退出，1 秒后自动重启")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
+            guard let self, isRestartable(self.mcp.state) else { return }
+            self.startMCP()
+        }
+    }
+
+    private func isRestartable(_ state: ServiceState) -> Bool {
+        switch state {
+        case .stopped, .failed:
+            return true
+        case .starting, .stopping, .running:
+            return false
+        }
+    }
+
+    private static func setting(_ key: String, default defaultValue: Bool) -> Bool {
+        UserDefaults.standard.object(forKey: key) as? Bool ?? defaultValue
     }
 
     var combinedLog: String {
@@ -180,16 +237,19 @@ final class AppModel: ObservableObject {
         let runPath = (projectRoot as NSString)
             .appendingPathComponent("miniapp-reverse-mcp/run_mcp_server.py")
         let cwd = (projectRoot as NSString).appendingPathComponent("miniapp-reverse-mcp")
-        return """
-        {
-          "mcpServers": {
-            "miniapp-reverse-mcp": {
-              "command": "\(pythonPath)",
-              "args": ["\(runPath)"],
-              "cwd": "\(cwd)"
-            }
-          }
+        let config: [String: Any] = [
+            "mcpServers": [
+                "miniapp-reverse-mcp": [
+                    "command": pythonPath,
+                    "args": [runPath],
+                    "cwd": cwd,
+                ],
+            ],
+        ]
+        guard let data = try? JSONSerialization.data(withJSONObject: config, options: [.prettyPrinted, .sortedKeys]),
+              let text = String(data: data, encoding: .utf8) else {
+            return "{}"
         }
-        """
+        return text
     }
 }

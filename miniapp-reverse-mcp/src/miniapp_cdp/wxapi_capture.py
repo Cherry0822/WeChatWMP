@@ -68,6 +68,17 @@ class WxApiCapture:
             if not self._enabled:
                 return []
         await self._inject(collector)
+        alive_result = await collector.evaluate_script(
+            "(function(){try{return window.__wxApiAudit&&window.__wxApiAudit.getCalls?'1':'0'}catch(e){return '0'}})()",
+            return_by_value=True,
+            await_promise=True,
+        )
+        if alive_result.get("result", {}).get("value") != "1":
+            self._enabled = False
+            await self.start(network_capture)
+            self._seen = 0
+            if not self._enabled:
+                return []
         result = await collector.evaluate_script(
             "JSON.stringify(window.__wxApiAudit.getCalls())",
             return_by_value=True,

@@ -37,6 +37,7 @@ const bufferToHexString = (buffer) => {
 let debugWSS = null;
 let proxyWSS = null;
 let fridaSessions = [];
+const proxyRequestOwners = new Map();
 
 const debug_server = () => {
     const wss = new WebSocket.Server({ port: DEBUG_PORT });
@@ -85,8 +86,15 @@ const debug_server = () => {
         }
 
         if (unwrappedData.category === "chromeDevtoolsResult") {
-            // 需要代理到 CDP 客户端
-            debugMessageEmitter.emit("cdpmessage", unwrappedData.data.payload);
+            let owner = null;
+            try {
+                const payload = JSON.parse(unwrappedData.data.payload);
+                if (payload && payload.id !== undefined) {
+                    owner = proxyRequestOwners.get(String(payload.id)) || null;
+                    proxyRequestOwners.delete(String(payload.id));
+                }
+            } catch (e) {}
+            debugMessageEmitter.emit("cdpmessage", unwrappedData.data.payload, owner);
         }
 
         // JS 层云函数 hook 结果解析
@@ -139,9 +147,9 @@ const debug_server = () => {
     });
 
     debugMessageEmitter.on("proxymessage", (message) => {
-        wss &&
-            wss.clients.forEach((client) => {
-                if (client.readyState === WebSocket.OPEN) {
+        const clients = Array.from(wss ? wss.clients : []);
+        clients.forEach((client) => {
+                if (client && client.readyState === WebSocket.OPEN) {
                     // 编码 CDP 并发送到小程序
                     const rawPayload = {
                         jscontext_id: "",
@@ -177,25 +185,34 @@ const proxy_server = () => {
     const wss = new WebSocket.Server({ port: CDP_PORT });
     console.log(`[server] proxy server running on ws://localhost:${CDP_PORT}`);
 
-    const onMessage = (message) => {
-        debugMessageEmitter.emit("proxymessage", message);
+    const onMessage = (ws, message) => {
+        try {
+            const payload = JSON.parse(message.toString());
+            if (payload && payload.id !== undefined) proxyRequestOwners.set(String(payload.id), ws);
+        } catch (e) {}
+        debugMessageEmitter.emit("proxymessage", message, ws);
     };
 
     wss.on("connection", (ws) => {
         console.log("[conn] CDP client connected");
-        ws.on("message", onMessage);
+        ws.on("message", (message) => onMessage(ws, message));
         ws.on("error", (err) => {
             console.error("[client] CDP err:", err);
+        });
+        ws.on("close", () => {
+            for (const [id, owner] of proxyRequestOwners) {
+                if (owner === ws) proxyRequestOwners.delete(id);
+            }
         });
         ws.on("close", () => {
             console.log("[client] CDP client disconnected");
         });
     });
 
-    debugMessageEmitter.on("cdpmessage", (message) => {
-        wss &&
-            wss.clients.forEach((client) => {
-                if (client.readyState === WebSocket.OPEN) {
+    debugMessageEmitter.on("cdpmessage", (message, owner) => {
+        const clients = owner ? [owner] : Array.from(wss ? wss.clients : []);
+        clients.forEach((client) => {
+                if (client && client.readyState === WebSocket.OPEN) {
                     // 发送 CDP 消息到 devtools
                     client.send(message);
                 }

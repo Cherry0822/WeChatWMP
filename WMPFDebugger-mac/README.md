@@ -25,7 +25,7 @@ macOS 版本的微信小程序调试工具（支持 Intel x64 和 Apple Silicon 
 
 - **操作系统**：macOS（支持 Intel x64 和 Apple Silicon arm64）
 - **Node.js**：至少 LTS v22 版本
-- **包管理器**：yarn
+- **包管理器**：npm
 - **浏览器**：基于 Chromium 的浏览器（如 Chrome、Edge 等）
 - **微信**：已安装并运行微信 macOS 版本
 - **关闭SIP**：您必须关闭电脑的SIP，否则frida没有权限
@@ -37,7 +37,7 @@ macOS 版本的微信小程序调试工具（支持 Intel x64 和 Apple Silicon 
 ```bash
 git clone https://github.com/your-username/WMPFDebugger-mac
 cd WMPFDebugger-mac
-yarn
+npm install
 ```
 
 ## 使用方法
@@ -197,8 +197,7 @@ WMPFDebugger-mac/
 │       ├── RemoteDebugUtils.js
 │       └── WARemoteDebugProtobuf.js
 ├── package.json
-├── package-lock.json
-├── yarn.lock
+└── package-lock.json
 └── README.md
 ```
 

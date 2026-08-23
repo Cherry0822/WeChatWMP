@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="17px" height="17px" viewBox="0 0 17 17" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <title>Combined Shape</title>
-    <g id="四期" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" fill-opacity="0.3">
-        <g id="画板" transform="translate(-43.000000, -43.000000)" fill="#000000">
-            <path d="M51.5,43 C56.1944204,43 60,46.8055796 60,51.5 C60,56.1944204 56.1944204,60 51.5,60 C46.8055796,60 43,56.1944204 43,51.5 C43,46.8055796 46.8055796,43 51.5,43 Z M54.0544232,48.0440156 L51.5,50.599 L48.9455768,48.0440156 L48.0440156,48.9455768 L50.599,51.5 L48.0440156,54.0544232 L48.9455768,54.9559844 L51.5,52.401 L54.0544232,54.9559844 L54.9559844,54.0544232 L52.401,51.5 L54.9559844,48.9455768 L54.0544232,48.0440156 Z" id="Combined-Shape"></path>
-        </g>
-    </g>
-</svg>

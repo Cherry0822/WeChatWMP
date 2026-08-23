@@ -7,6 +7,7 @@ final class DebuggerService: ObservableObject {
     @Published var pid: Int32 = 0
 
     var onLog: ((String) -> Void)?
+    var onUnexpectedTermination: (() -> Void)?
     private var process: Process?
     private let lock = NSLock()
     private let maxLogLines = 800
@@ -44,12 +45,16 @@ final class DebuggerService: ObservableObject {
                 self.process = nil
                 self.pid = 0
                 if self.state == .starting || self.state == .running || self.state == .stopping {
-                    if self.state != .stopping && p.terminationStatus != 0 {
+                    let unexpected = self.state != .stopping
+                    if unexpected && p.terminationStatus != 0 {
                         self.state = .failed("进程异常退出 (code \(p.terminationStatus))")
                     } else {
                         self.state = .stopped
                     }
                     self.appendLog("[debugger] 进程已退出 (code \(p.terminationStatus))")
+                    if unexpected {
+                        self.onUnexpectedTermination?()
+                    }
                 }
             }
         }
@@ -66,21 +71,27 @@ final class DebuggerService: ObservableObject {
         }
     }
 
-    func stop() {
-        guard let proc = process else { return }
+    func stop(completion: (() -> Void)? = nil) {
+        guard let proc = process else { completion?(); return }
         state = .stopping
         proc.interrupt()
+        func finishIfStopped() {
+            guard proc.isRunning else { completion?(); return }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                finishIfStopped()
+            }
+        }
         DispatchQueue.main.asyncAfter(deadline: .now() + 4) { [weak self, weak proc] in
             guard let self, let proc else { return }
             if self.process != nil, proc.isRunning {
                 proc.terminate()
             }
         }
+        finishIfStopped()
     }
 
     func restart(projectRoot: String, nodePath: String) {
-        stop()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) { [weak self] in
+        stop { [weak self] in
             self?.start(projectRoot: projectRoot, nodePath: nodePath)
         }
     }
@@ -109,12 +120,14 @@ enum MCPError: LocalizedError {
     }
 }
 
-final class MCPClient: ObservableObject {
+// Published state is confined to the main queue; protocol state is confined to ioQueue.
+final class MCPClient: ObservableObject, @unchecked Sendable {
     @Published var state: ServiceState = .stopped
     @Published var log: String = ""
     @Published var connected = false
 
     var onLog: ((String) -> Void)?
+    var onUnexpectedTermination: (() -> Void)?
     private var process: Process?
     private var stdin: FileHandle?
     private var buffer = Data()
@@ -163,15 +176,19 @@ final class MCPClient: ObservableObject {
             guard let self else { return }
             self.ioQueue.sync {
                 self.failAllPending(MCPError.processExited)
+                self.completeStartup(.failure(MCPError.processExited))
             }
             DispatchQueue.main.async {
                 self.process = nil
+                self.stdin = nil
                 self.connected = false
-                self.startupContinuation?.resume(throwing: MCPError.processExited)
-                self.startupContinuation = nil
                 if self.state == .starting || self.state == .running || self.state == .stopping {
+                    let unexpected = self.state != .stopping
                     self.state = .stopped
                     self.appendLog("[mcp] 进程已退出")
+                    if unexpected {
+                        self.onUnexpectedTermination?()
+                    }
                 }
             }
         }
@@ -184,14 +201,13 @@ final class MCPClient: ObservableObject {
         }
 
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-            startupContinuation = continuation
+            ioQueue.sync {
+                self.startupContinuation = continuation
+            }
             DispatchQueue.global().asyncAfter(deadline: .now() + 10) { [weak self] in
                 guard let self else { return }
                 self.ioQueue.async {
-                    if let cont = self.startupContinuation {
-                        self.startupContinuation = nil
-                        cont.resume(throwing: MCPError.server("MCP 握手超时"))
-                    }
+                    self.completeStartup(.failure(MCPError.server("MCP 握手超时")))
                 }
             }
             do {
@@ -208,17 +224,19 @@ final class MCPClient: ObservableObject {
                             self.state = .running
                             self.appendLog("[mcp] MCP 握手完成，\(ToolCatalog.all.count) 个工具可用")
                         }
+                        self.completeStartup(.success(()))
                     case .failure(let error):
                         DispatchQueue.main.async {
                             self.state = .failed(error.localizedDescription)
                         }
+                        self.completeStartup(.failure(error))
+                        return
                     }
-                    self.startupContinuation?.resume(returning: ())
-                    self.startupContinuation = nil
                 }
             } catch {
-                self.startupContinuation = nil
-                continuation.resume(throwing: error)
+                ioQueue.async {
+                    self.completeStartup(.failure(error))
+                }
             }
         }
     }
@@ -246,16 +264,23 @@ final class MCPClient: ObservableObject {
         }
     }
 
-    func stop() {
-        guard let proc = process else { return }
+    func stop(completion: (() -> Void)? = nil) {
+        guard let proc = process else { completion?(); return }
         state = .stopping
         proc.interrupt()
+        func finishIfStopped() {
+            guard proc.isRunning else { completion?(); return }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                finishIfStopped()
+            }
+        }
         DispatchQueue.main.asyncAfter(deadline: .now() + 4) { [weak self, weak proc] in
             guard let self, let proc else { return }
             if self.process != nil, proc.isRunning {
                 proc.terminate()
             }
         }
+        finishIfStopped()
     }
 
     private func send(
@@ -317,6 +342,12 @@ final class MCPClient: ObservableObject {
             handler(.failure(error))
         }
         pending.removeAll()
+    }
+
+    private func completeStartup(_ result: Result<Void, Error>) {
+        guard let continuation = startupContinuation else { return }
+        startupContinuation = nil
+        continuation.resume(with: result)
     }
 
     private static func extractText(_ value: Any?) -> String {

@@ -2,12 +2,23 @@
 .DS_Store
 *.log
 *.swp
+__pycache__/
+*.pyc
 .idea/
 .vscode/
+.reasonix/
+
+# === 本地分析与辅助脚本 ===
+analysis/
+_patch.py
+_analyze.py
+bypass.py
+mock_login.py
 
 # === WMPFDebugger-mac (Node.js) ===
 WMPFDebugger-mac/node_modules/
 WMPFDebugger-mac/dist/
+WMPFDebugger-mac/analysis/
 WMPFDebugger-mac/*.local
 WMPFDebugger-mac/.probe1*.js
 WMPFDebugger-mac/.probe1*-run.js
