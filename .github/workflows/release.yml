@@ -1,0 +1,60 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: macos-26
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Swift toolchain
+        uses: swift-actions/setup-swift@v2
+        with:
+          swift-version: '6.2'
+
+      - name: Build WMPLauncher
+        run: ./WMPLauncher/build.sh
+
+      - name: Package macOS app
+        run: ditto -c -k --sequesterRsrc --keepParent WMPLauncher.app WMPLauncher-macOS.zip
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Build Python package
+        working-directory: miniapp-reverse-mcp
+        run: |
+          python -m pip install --upgrade pip build
+          python -m build
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: WMPFDebugger-mac/package.json
+
+      - name: Install Node dependencies
+        working-directory: WMPFDebugger-mac
+        run: npm install --ignore-scripts
+
+      - name: Create release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: |
+            WMPLauncher-macOS.zip
+            miniapp-reverse-mcp/dist/*
